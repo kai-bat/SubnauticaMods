@@ -1,0 +1,25 @@
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\obj\Debug\AlienRifle.csprojResolveAssemblyReference.cache
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\obj\Debug\AlienRifle.Properties.Resources.resources
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\obj\Debug\AlienRifle.csproj.GenerateResource.Cache
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\obj\Debug\AlienRifle.csproj.CoreCompileInputs.cache
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\AlienRifle.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\AlienRifle.pdb
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\0Harmony.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\Assembly-CSharp.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\iTween.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\LibNoise.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\LitJson.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\LumenWorks.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\Poly2Tri.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\UnityEngine.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\UnityEngine.UI.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\0Harmony.pdb
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\obj\Debug\AlienRifle.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\obj\Debug\AlienRifle.pdb
+C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Mods\AlienRifle.dll
+C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Mods\AlienRifle.pdb
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\SMLHelper.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\QModInstaller.dll
+C:\Users\Kyle McGoldrick\Downloads\Github\SubnauticaMods\AlienRifle\bin\Debug\Mono.Cecil.dll
