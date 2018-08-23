@@ -4,7 +4,7 @@ Basically a mod for subnautica to add the smaller gun thats inside the bigger gu
 
 # Custom Load Screen
 
-A simple mod, lets you change the drab default loading screen to whatever you want
+A simple mod, lets you change the drab default loading screen to whatever you want. Also on Nexus!
 
 # New Main Menu
 
