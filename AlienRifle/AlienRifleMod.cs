@@ -4,114 +4,82 @@ using System.Reflection;
 using Harmony;
 using UnityEngine;
 using SMLHelper;
-using SMLHelper.Patchers;
+using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Crafting;
+using SMLHelper.V2.Utility;
+using SMLHelper;
 using UWE;
 using System.IO;
 using Object = UnityEngine.Object;
 
 namespace AlienRifle
 {
-    public class AlienRifleMod
+    public static class AlienRifleMod
     {
         public static void Patch()
         {
             try
             {
-                ARtech = TechTypePatcher.AddTechType("AlienRifle", "Alien Rifle", "A strange rifle found in an ancient facility");
-                Sprite rifleIcon = ImageUtils.Texture2Sprite(ImageUtils.LoadTexture(Directory + "textures/icon.png"));
-                CustomSpriteHandler.customSprites.Add(new CustomSprite(ARtech, rifleIcon));
-                bund = AssetBundle.LoadFromMemory(Properties.Resources.RifleAssets);
-                GameObject gobj = LoadObject();
-
-                gobj.transform.GetChild(0).gameObject.AddComponent<MeshCollider>().convex = true;
-
-                MeshRenderer rend = gobj.transform.GetChild(1).GetComponent<MeshRenderer>();
-                rend.material = gobj.transform.GetChild(0).GetComponent<MeshRenderer>().material;
-                rend.material.SetColor("_EmissionColor", new Color(0.1254f, 0.4018f, 0.6745f));
-
-
-                Vector3 offset = new Vector3(0, 0.1f, 0.3f);
-                gobj.transform.GetChild(0).localPosition += offset;
-                gobj.transform.GetChild(1).localPosition += offset;
-                gobj.transform.GetChild(0).transform.localEulerAngles = new Vector3(-90, 0, 0);
-                gobj.transform.GetChild(1).transform.localEulerAngles = new Vector3(-90, 0, 0);
-
-                Utility.AddBasicComponents(ref gobj, "AlienRifle");
-                WorldForces forces = gobj.GetComponent<WorldForces>();
-                forces.underwaterGravity = 0;
-
-                foreach(Renderer render in gobj.GetAllComponentsInChildren<Renderer>())
+                bund = AssetBundle.LoadFromFile(Environment.CurrentDirectory+"/QMods/AlienRifle/alienrifle");
+                Atlas.Sprite rifleIcon = null;
+                try
                 {
-                    render.material.shader = Shader.Find("MarmosetUBER");
+                    rifleIcon = new Atlas.Sprite(bund.LoadAsset<Sprite>("RifleIcon"));
+                }
+                catch
+                {
+                    Console.WriteLine("[AlienRifle] Couldn't convert rifle sprite to Atlas.Sprite ");
+                }
+                ARtech = TechTypeHandler.AddTechType("AlienRifle", "Alien Rifle", "A strange rifle found in an ancient facility", rifleIcon, false);
+
+                if(rifleIcon != null)
+                {
+                    SpriteHandler.RegisterSprite(ARtech, rifleIcon);
                 }
 
-                Pickupable pick = gobj.AddComponent<Pickupable>();
+                RiflePrefab prefab = new RiflePrefab("AlienRifle", "WorldEntities/Tools/AlienRifle", ARtech);
 
-                gobj.AddComponent<TechTag>().type = ARtech;
+                PrefabHandler.RegisterPrefab(prefab);
 
-                VFXFabricating vfxfabricating = gobj.transform.GetChild(0).gameObject.AddComponent<VFXFabricating>();
-                vfxfabricating.localMinY = -0.4f;
-                vfxfabricating.localMaxY = 0.2f;
-                vfxfabricating.posOffset = new Vector3(-0.054f, 0f, -0.06f);
-                vfxfabricating.eulerOffset = new Vector3(0f, 0f, 90f);
-                vfxfabricating.scaleFactor = 1f;
-                
-                EnergyMixin AREnergy = gobj.AddComponent<EnergyMixin>();
-                AREnergy.defaultBattery = TechType.PrecursorIonBattery;
-                AREnergy.storageRoot = gobj.transform.GetChild(1).gameObject.AddComponent<ChildObjectIdentifier>();
-                AREnergy.compatibleBatteries = new List<TechType>
+                var techData = new TechData
                 {
-                    TechType.PrecursorIonBattery
-                };
-                AREnergy.allowBatteryReplacement = true;
-                AREnergy.batteryModels = new EnergyMixin.BatteryModels[]
-                {
-                    new EnergyMixin.BatteryModels
+                    craftAmount = 1,
+                    Ingredients = new List<Ingredient>()
                     {
-                        techType = TechType.PrecursorIonBattery,
-                        model = gobj.transform.GetChild(1).gameObject
-                    }
+                        new Ingredient(TechType.PlasteelIngot, 2),
+                        new Ingredient(TechType.Nickel, 5),
+                        new Ingredient(TechType.AdvancedWiringKit, 1),
+                        new Ingredient(TechType.Glass, 5)
+                    },
                 };
+                CraftDataHandler.SetTechData(ARtech, techData);
+                CraftTreeHandler.AddCraftingNode(CraftTree.Type.Fabricator, ARtech, new string[] { "Personal", "Tools", "AlienRifle" });
 
-                Material mat = new Material(Shader.Find("MarmosetUBER"));
-
-                AlienRifle rifle = gobj.AddComponent<AlienRifle>();
-                rifle.beamMat = mat;
-                rifle.mainCollider = gobj.transform.GetChild(0).GetComponent<MeshCollider>();
-                rifle.ikAimRightArm = true;
-                rifle.useLeftAimTargetOnPlayer = true;
-                rifle.animator = gobj.AddComponent<Animator>();
-                rifle.animator.runtimeAnimatorController = CraftData.GetPrefabForTechType(TechType.StasisRifle).GetComponent<Animator>().runtimeAnimatorController;
-                gobj.GetComponent<WorldForces>().underwaterGravity = 0f;
-                CustomPrefabHandler.customPrefabs.Add(new CustomPrefab("AlienRifle", "WorldEntities/Tools/AlienRifle", gobj, ARtech));
-                var techData = new TechDataHelper
-                {
-                    _craftAmount = 1,
-                    _ingredients = new List<IngredientHelper>()
-                {
-                    new IngredientHelper(TechType.PlasteelIngot, 2),
-                    new IngredientHelper(TechType.Nickel, 5),
-                    new IngredientHelper(TechType.PrecursorIonCrystal, 3),
-                    new IngredientHelper(TechType.AdvancedWiringKit, 1)
-                },
-                    _techType = ARtech
-                };
-                CraftDataPatcher.customTechData.Add(ARtech, techData);
-                CraftTreePatcher.customNodes.Add(new CustomCraftNode(ARtech, CraftScheme.Fabricator, "Personal/Tools/AlienRifle"));
-                KnownTechPatcher.unlockedAtStart = new List<TechType>
-                {
-                    ARtech
-                };
-
-                CraftDataPatcher.customItemSizes.Add(ARtech, new Vector2int(2, 2));
-                CraftDataPatcher.customEquipmentTypes.Add(ARtech, EquipmentType.Hand);
+                CraftDataHandler.SetItemSize(ARtech, new Vector2int(2, 2));
+                CraftDataHandler.SetEquipmentType(ARtech, EquipmentType.Hand);
 
                 HarmonyInstance inst = HarmonyInstance.Create("com.kylinator.alienrifle");
                 inst.PatchAll(Assembly.GetExecutingAssembly());
-                Debug.Log("Loading Alien Rifle finished!");
+
+                GameObject reaper = CraftData.GetPrefabForTechType(TechType.ReaperLeviathan);
+                Console.WriteLine("[AlienRifle] Reaper Health: " + reaper.GetComponent<LiveMixin>().health);
+
+                Debug.Log("[AlienRifle] Loading Alien Rifle finished!");
             } catch(Exception e)
             {
-                Debug.Log("Failed to load Alien Rifle: "+e.Message + e.StackTrace);
+                Debug.Log("[AlienRifle] Failed to load Alien Rifle: "+e.Message + e.StackTrace);
+            }
+        }
+
+        public static T AddOrGetComponent<T>(this GameObject self) where T : Component
+        {
+            if(self.GetComponent<T>() != null)
+            {
+                return self.GetComponent<T>();
+            }
+            else
+            {
+                return self.AddComponent<T>();
             }
         }
 
@@ -133,20 +101,6 @@ namespace AlienRifle
                 }
                 file.WriteLine(" ");
             }
-        }
-
-        static GameObject LoadObject()
-        {
-            GameObject obj = new GameObject();
-            try
-            {
-                Debug.Log("Loading prefab...");
-                obj = bund.LoadAsset<GameObject>("AlienRifle");
-                Debug.Log("Prefab loaded");
-            } catch (Exception e) {
-                Debug.Log("Model loading failed: " + e.StackTrace);
-            }
-            return obj;
         }
 
         public static AssetBundle bund;
