@@ -7,7 +7,6 @@ using SMLHelper;
 using SMLHelper.V2.Handlers;
 using SMLHelper.V2.Crafting;
 using SMLHelper.V2.Utility;
-using SMLHelper;
 using UWE;
 using System.IO;
 using Object = UnityEngine.Object;
@@ -30,7 +29,7 @@ namespace AlienRifle
                 {
                     Console.WriteLine("[AlienRifle] Couldn't convert rifle sprite to Atlas.Sprite ");
                 }
-                ARtech = TechTypeHandler.AddTechType("AlienRifle", "Alien Rifle", "A strange rifle found in an ancient facility", rifleIcon, false);
+                ARtech = TechTypeHandler.AddTechType("AlienRifle", "Alien Rifle", "A strange weapon found in an ancient facility");
 
                 if(rifleIcon != null)
                 {
@@ -61,9 +60,6 @@ namespace AlienRifle
                 HarmonyInstance inst = HarmonyInstance.Create("com.kylinator.alienrifle");
                 inst.PatchAll(Assembly.GetExecutingAssembly());
 
-                GameObject reaper = CraftData.GetPrefabForTechType(TechType.ReaperLeviathan);
-                Console.WriteLine("[AlienRifle] Reaper Health: " + reaper.GetComponent<LiveMixin>().health);
-
                 Debug.Log("[AlienRifle] Loading Alien Rifle finished!");
             } catch(Exception e)
             {
@@ -80,26 +76,6 @@ namespace AlienRifle
             else
             {
                 return self.AddComponent<T>();
-            }
-        }
-
-        static void WriteGameObjectToFile(GameObject obj)
-        {
-            StreamWriter file = File.CreateText(Directory+"object.txt");
-            file.WriteLine(obj.transform.name);
-            foreach (Component comp in obj.transform.GetComponents<Component>())
-            {
-                file.WriteLine("    "+comp.GetType().Name);
-            }
-            file.WriteLine(" ");
-            foreach(Transform trans in obj.GetComponentsInChildren<Transform>())
-            {
-                file.WriteLine(trans.name);
-                foreach (Component comp in trans.GetComponents<Component>())
-                {
-                    file.WriteLine("    " + comp.GetType().Name);
-                }
-                file.WriteLine(" ");
             }
         }
 

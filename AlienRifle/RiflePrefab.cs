@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using UWE;
 
 namespace AlienRifle
 {
@@ -108,12 +109,10 @@ namespace AlienRifle
                 rifle.drawSound = stasisrifle.drawSound;
                 rifle.reloadSound = stasisrifle.reloadSound;
 
-                rifle.effects = gobj.AddOrGetComponent<VFXController>();
-                rifle.effects.emitters = stasisrifle.fxControl.emitters;
-
                 rifle.muzzleFlash = gobj.transform.GetChild(0).GetChild(0).GetComponent<ParticleSystem>();
                 rifle.muzzleSparks = gobj.transform.GetChild(0).GetChild(1).GetComponent<ParticleSystem>();
                 Object.Destroy(stasisrifle);
+                Object.Destroy(cannon);
 
                 rifle.mainCollider = gobj.GetComponent<BoxCollider>();
                 rifle.ikAimRightArm = true;

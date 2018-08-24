@@ -3,12 +3,14 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using UnityEngine;
+using SMLHelper.V2.Utility;
 
 namespace AlienRifle
 {
     [RequireComponent(typeof(EnergyMixin))]
-    class AlienRifle : PlayerTool
+    class AlienRifle : PlayerTool, IProtoEventListener
     {
         public override string animToolName
         {
@@ -27,12 +29,15 @@ namespace AlienRifle
         public ParticleSystem muzzleFlash;
         public ParticleSystem muzzleSparks;
 
-        public VFXController effects;
         GameObject mask;
+        Light flash;
+        Light projector;
 
         bool isAiming = false;
         float nextFire = 0f;
         bool ready = true;
+
+        string id;
 
         public void Start()
         {
@@ -41,6 +46,20 @@ namespace AlienRifle
             cam = Player.main.camRoot.mainCamera;
             muzzleFlash.GetComponent<ParticleSystemRenderer>().material.shader = Shader.Find("Particles/Additive");
             muzzleSparks.GetComponent<ParticleSystemRenderer>().material.shader = Shader.Find("Particles/Additive");
+            flash = muzzleFlash.gameObject.AddOrGetComponent<Light>();
+            flash.range = 5f;
+            flash.color = Color.green;
+            flash.intensity = 0f;
+
+            projector = muzzleSparks.gameObject.AddOrGetComponent<Light>();
+            projector.type = LightType.Spot;
+            projector.range = 30f;
+            projector.spotAngle = 20f;
+            projector.intensity = 2f;
+            projector.color = Color.white;
+            projector.enabled = false;
+
+            id = GetComponent<PrefabIdentifier>().Id;
         }
 
         public void LateUpdate()
@@ -77,6 +96,8 @@ namespace AlienRifle
             {
                 mask.SetActive(false);
             }
+
+            flash.intensity = Mathf.Lerp(flash.intensity, 0f, 0.1f);
         }
 
         public override bool OnRightHandHeld()
@@ -89,6 +110,7 @@ namespace AlienRifle
                 FMODUWE.PlayOneShot(shootSound, transform.position, 1f);
                 muzzleFlash.Play();
                 muzzleSparks.Play();
+                flash.intensity = 2f;
 
                 energyMixin.ConsumeEnergy(50f);
             }
@@ -99,6 +121,7 @@ namespace AlienRifle
         {
             if (ready)
             {
+                projector.enabled = true;
                 isAiming = true;
             }
             return true;
@@ -108,6 +131,7 @@ namespace AlienRifle
         {
             if (ready)
             {
+                projector.enabled = false;
                 isAiming = false;
             }
             return true;
@@ -186,6 +210,59 @@ namespace AlienRifle
             if (animator != null)
             {
                 SafeAnimator.SetBool(animator, "using_tool", true);
+            }
+        }
+
+        public void OnProtoSerialize(ProtobufSerializer serializer)
+        {
+            RifleSaveData data = new RifleSaveData(energyMixin.HasItem(), energyMixin.charge);
+
+            string serialized = JsonUtility.ToJson(data);
+
+            string dataPath = Path.Combine(SaveUtils.GetCurrentSaveDataDir(), "RifleSaves");
+
+            if(!Directory.Exists(dataPath))
+            {
+                Directory.CreateDirectory(dataPath);
+            }
+
+            File.WriteAllText(Path.Combine(dataPath, "rifle-" + id + ".dat"), serialized);
+        }
+
+        public void OnProtoDeserialize(ProtobufSerializer serializer)
+        {
+            string file = Path.Combine(SaveUtils.GetCurrentSaveDataDir(), "RifleSaves/rifle-"+id+".dat");
+            Console.Write("[AlienRifle] Getting save data from " + id +"'s save file");
+            if (File.Exists(file))
+            {
+                string data = File.ReadAllText(file);
+
+                if (!string.IsNullOrEmpty(data))
+                {
+                    RifleSaveData converted = JsonUtility.FromJson<RifleSaveData>(data);
+
+                    if (converted.hasBattery)
+                    {
+                        energyMixin.SetBattery(TechType.PrecursorIonBattery, converted.batteryCharge);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("[AlienRifle] Save not found for: " + id);
+            }
+        }
+
+        [Serializable]
+        class RifleSaveData
+        {
+            public bool hasBattery;
+            public float batteryCharge;
+
+            public RifleSaveData(bool hasBTY, float BTYCHG)
+            {
+                hasBattery = hasBTY;
+                batteryCharge = BTYCHG;
             }
         }
     }
