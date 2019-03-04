@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomLoadScreen", "CustomL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewMainMenu", "NewMainMenu\NewMainMenu.csproj", "{EC82D5B6-FC34-43C5-AD74-C2AB69CAF22F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shark", "Shark\Shark.csproj", "{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{EC82D5B6-FC34-43C5-AD74-C2AB69CAF22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC82D5B6-FC34-43C5-AD74-C2AB69CAF22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC82D5B6-FC34-43C5-AD74-C2AB69CAF22F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
