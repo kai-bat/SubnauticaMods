@@ -30,7 +30,8 @@ namespace Shark
             sharkComp.handLabel = "Pilot 5H-4RK";
             sharkComp.controlSheme = Vehicle.ControlSheme.Submersible;
 
-            shark.AddOrGet<SharkControl>().shark = sharkComp;
+            SharkControl control = shark.AddOrGet<SharkControl>();
+            control.shark = sharkComp;
 
             LiveMixin mixin = shark.AddOrGet<LiveMixin>();
             mixin.health = 100f;
@@ -45,8 +46,9 @@ namespace Shark
 
             WorldForces worldForces = shark.AddOrGet<WorldForces>();
             worldForces.aboveWaterGravity = 9.8f;
-            worldForces.underwaterDrag = 0.5f;
+            worldForces.underwaterDrag = 2f;
             worldForces.underwaterGravity = 0f;
+            worldForces.aboveWaterDrag = 1f;
 
             sharkComp.worldForces = worldForces;
 
