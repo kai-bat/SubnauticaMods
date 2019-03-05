@@ -5,6 +5,8 @@ using System.Text;
 using UnityEngine;
 using SMLHelper.V2.Handlers;
 using System.IO;
+using Harmony;
+using System.Reflection;
 
 namespace Shark
 {
@@ -20,6 +22,9 @@ namespace Shark
 
             SharkPrefab prefab = new SharkPrefab("Shark", "Assets/SharkSubmersible.prefab", type);
             PrefabHandler.RegisterPrefab(prefab);
+
+            HarmonyInstance harm = HarmonyInstance.Create("com.shark");
+            harm.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         public static T AddOrGet<T>(this GameObject obj) where T : Component

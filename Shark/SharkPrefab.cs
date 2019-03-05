@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using SMLHelper.V2.Assets;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Shark
 {
@@ -28,45 +29,33 @@ namespace Shark
             sharkComp.playerPosition = shark.transform.Find("SeatPosition").gameObject;
             sharkComp.handLabel = "Pilot 5H-4RK";
             sharkComp.controlSheme = Vehicle.ControlSheme.Submersible;
+
+            shark.AddOrGet<SharkControl>().shark = sharkComp;
+
             LiveMixin mixin = shark.AddOrGet<LiveMixin>();
             mixin.health = 100f;
-            mixin.data = new LiveMixinData();
-
-            sharkComp.worldForces = shark.AddOrGet<WorldForces>();
-            sharkComp.worldForces.aboveWaterGravity = 9.8f;
-            sharkComp.worldForces.underwaterDrag = 0.5f;
-            sharkComp.worldForces.underwaterGravity = 0f;
+            LiveMixinData data = new LiveMixinData();
+            data.maxHealth = 100f;
+            data.destroyOnDeath = false;
+            data.weldable = true;
+            data.canResurrect = false;
+            data.invincibleInCreative = true;
 
             sharkComp.liveMixin = mixin;
 
-            EnergyMixin energy = shark.AddOrGet<EnergyMixin>();
+            WorldForces worldForces = shark.AddOrGet<WorldForces>();
+            worldForces.aboveWaterGravity = 9.8f;
+            worldForces.underwaterDrag = 0.5f;
+            worldForces.underwaterGravity = 0f;
 
-            energy.storageRoot = sharkComp.playerPosition.AddOrGet<ChildObjectIdentifier>();
+            sharkComp.worldForces = worldForces;
 
-            EnergyInterface energyint = shark.AddOrGet<EnergyInterface>();
-            energyint.sources = new EnergyMixin[] {
-                energy
-            };
+            shark.AddOrGet<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Far;
+            shark.AddOrGet<SkyApplier>().renderers = shark.GetComponentsInChildren<Renderer>();
+            shark.AddOrGet<TechTag>().type = TechType;
+            shark.AddOrGet<PrefabIdentifier>().ClassId = ClassID;
 
-            //typeof(Shark).GetField("energyInterface", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(sharkComp, energyint);
-
-            energy.defaultBattery = TechType.PowerCell;
-            energy.compatibleBatteries = new List<TechType>
-            {
-                TechType.PowerCell
-            };
-            EnergyMixin.BatteryModels battery = new EnergyMixin.BatteryModels();
-            battery.model = shark.transform.Find("SharkSubmersible_1").gameObject;
-            battery.techType = TechType.PowerCell;
-            energy.batteryModels = new EnergyMixin.BatteryModels[]
-            {
-                battery
-            };
-
-            CrushDamage dmg = shark.AddOrGet<CrushDamage>();
-            dmg.liveMixin = mixin;
-            dmg.vehicle = sharkComp;
-            sharkComp.crushDamage = dmg;
+            Shark.sharkName = shark.name;
 
             return shark;
         }
