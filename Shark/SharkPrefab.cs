@@ -34,14 +34,14 @@ namespace Shark
             control.shark = sharkComp;
 
             LiveMixin mixin = shark.AddOrGet<LiveMixin>();
-            mixin.health = 100f;
             LiveMixinData data = new LiveMixinData();
+            mixin.health = 100f;
             data.maxHealth = 100f;
             data.destroyOnDeath = false;
             data.weldable = true;
             data.canResurrect = false;
             data.invincibleInCreative = true;
-
+            mixin.data = data;
             sharkComp.liveMixin = mixin;
 
             WorldForces worldForces = shark.AddOrGet<WorldForces>();
@@ -57,7 +57,58 @@ namespace Shark
             shark.AddOrGet<TechTag>().type = TechType;
             shark.AddOrGet<PrefabIdentifier>().ClassId = ClassID;
 
-            Shark.sharkName = shark.name;
+            sharkComp.headlights.Add(shark.FindChild("Headlight1").GetComponent<Light>());
+            sharkComp.headlights.Add(shark.FindChild("Headlight2").GetComponent<Light>());
+
+            shark.AddOrGet<SmoothVehicleCamera>().vehicle = sharkComp;
+            sharkComp.energyInterface = shark.AddOrGet<EnergyInterface>();
+
+            Transform energyParent = shark.FindChild("BatteryPower").transform;
+
+            EnergyMixin energy = energyParent.gameObject.AddOrGet<EnergyMixin>();
+            energy.defaultBattery = TechType.PowerCell;
+            energy.allowBatteryReplacement = true;
+            energy.compatibleBatteries = new List<TechType>
+            {
+                TechType.PowerCell,
+                TechType.PrecursorIonPowerCell
+            };
+            EnergyMixin.BatteryModels model = new EnergyMixin.BatteryModels();
+            model.model = energyParent.Find("RegularBattery").gameObject;
+            model.techType = TechType.PowerCell;
+            EnergyMixin.BatteryModels model2 = new EnergyMixin.BatteryModels();
+            model2.model = energyParent.Find("IonBattery").gameObject;
+            model2.techType = TechType.PrecursorIonPowerCell;
+
+            energy.batteryModels = new EnergyMixin.BatteryModels[]
+            {
+                model,
+                model2
+            };
+
+            energy.controlledObjects = new GameObject[] { };
+
+            sharkComp.modulesRoot = shark.FindChild("UpgradeModules").AddOrGet<ChildObjectIdentifier>();
+            energy.storageRoot = energyParent.gameObject.AddOrGet<ChildObjectIdentifier>();
+            sharkComp.leftHandPlug = shark.FindChild("LeftHandWheel").transform;
+            sharkComp.rightHandPlug = shark.FindChild("RightHandWheel").transform;
+
+            sharkComp.energyInterface.sources = new EnergyMixin[]
+            {
+                energy
+            };
+
+            shark.AddOrGet<SharkTestGUI>().shark = sharkComp;
+
+            sharkComp.crushDamage = shark.AddOrGet<CrushDamage>();
+            sharkComp.crushDamage.crushDepth = 500f;
+            sharkComp.crushDamage.kBaseCrushDepth = 500f;
+            sharkComp.crushDamage.liveMixin = sharkComp.liveMixin;
+
+            shark.AddOrGet<DealDamageOnImpact>();
+
+            sharkComp.chairFront = shark.FindChild("FrontseatPos").transform;
+            sharkComp.chairBack = shark.FindChild("BackseatPos").transform;
 
             return shark;
         }

@@ -24,7 +24,7 @@ namespace Shark
             PrefabHandler.RegisterPrefab(prefab);
 
             HarmonyInstance harm = HarmonyInstance.Create("com.shark");
-            harm.PatchAll(Assembly.GetExecutingAssembly());
+            //harm.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         public static T AddOrGet<T>(this GameObject obj) where T : Component

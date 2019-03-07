@@ -12,6 +12,7 @@ namespace Shark
     {
         public Shark shark;
 
+        float sonarTimer = 0f;
         Vector2 smoothLook = Vector2.zero;
 
         void Awake()
@@ -26,51 +27,73 @@ namespace Shark
             ExitVehicle();
         }
 
-        void Update()
+        void Update ()
         {
-            Fixer fixer = shark.GetComponent<Fixer>();
-            if (fixer)
+            if (transform.parent)
             {
-                Object.Destroy(fixer);
+                transform.parent = null;
             }
+        }
 
-            if (shark.GetPilotingMode() && !shark.worldForces.IsAboveWater())
+        void FixedUpdate()
+        {
+            float energyToConsume = 0f;
+
+            //Stuff to do while piloting
+            if (shark.GetPilotingMode())
             {
-                shark.isBoosting = GameInput.GetButtonHeld(GameInput.Button.RightHand);
-
-                //Boost/Regular movement
-                if(shark.isBoosting)
+                if (Input.GetKeyDown(KeyCode.X))
                 {
-                    shark.useRigidbody.AddForce(transform.forward, ForceMode.VelocityChange);
+                    shark.isInFront = !shark.isInFront;
+                }
+
+                if (shark.energyInterface.hasCharge && shark.isInFront)
+                {
+                    shark.boostCharge += GameInput.GetButtonHeld(GameInput.Button.RightHand) ?
+                            0.05f : -0.05f;
+
+                    shark.boostCharge = Mathf.Clamp01(shark.boostCharge);
+
+                    shark.isBoosting = shark.boostCharge == 1f;
+                    Camera.main.fieldOfView = Mathf.Lerp(MiscSettings.fieldOfView, MiscSettings.fieldOfView * 1.3f, shark.boostCharge);
                 }
                 else
                 {
-                    shark.useRigidbody.AddForce(transform.rotation * GameInput.GetMoveDirection() * 2500f);
+                    shark.boostCharge = 0f;
+                    shark.isBoosting = false;
+                    Camera.main.fieldOfView = MiscSettings.fieldOfView;
                 }
 
-                // Look rotation
-                Vector2 look = GameInput.GetLookDelta();
-
-                shark.useRigidbody.AddTorque(transform.up * look.x * 0.01f, ForceMode.VelocityChange);
-                shark.useRigidbody.AddTorque(transform.right * -look.y * 0.01f, ForceMode.VelocityChange);
-                shark.useRigidbody.AddTorque(transform.forward * -look.x * 0.01f, ForceMode.VelocityChange);
-
-                Quaternion cameraRot = MainCameraControl.main.transform.localRotation;
-
-                smoothLook = Vector2.Lerp(smoothLook, look, 0.1f);
-
-                cameraRot = Quaternion.Lerp(cameraRot, Quaternion.identity, 0.1f);
-                Vector3 euler = cameraRot.eulerAngles;
-                euler.x -= smoothLook.y;
-                euler.y += smoothLook.x;
-
-                cameraRot = Quaternion.Euler(euler);
-                MainCameraControl.main.transform.localRotation = cameraRot;
-
-                // Don't stabilize when shift is held
-                if (!GameInput.GetButtonHeld(GameInput.Button.Sprint))
+                //Stuff to do in water
+                if (shark.useRigidbody.worldCenterOfMass.y < Ocean.main.GetOceanLevel() && 
+                    !shark.precursorOutOfWater && 
+                    shark.energyInterface.hasCharge)
                 {
-                    shark.StabilizeRoll();
+
+                    //Boost/Regular movement
+                    if (shark.isBoosting)
+                    {
+                        shark.useRigidbody.AddForce(transform.forward * 2f, ForceMode.VelocityChange);
+                        energyToConsume += 0.1f;
+                    }
+                    else
+                    {
+                        shark.useRigidbody.AddForce(transform.rotation * GameInput.GetMoveDirection() * 3000f);
+                        energyToConsume += GameInput.GetMoveDirection().magnitude * 0.001f;
+                    }
+
+                    // Don't stabilize when shift is held
+                    if (!GameInput.GetButtonHeld(GameInput.Button.Sprint))
+                    {
+                        shark.StabilizeRoll();
+                    }
+
+                    // Look rotation
+                    Vector2 look = GameInput.GetLookDelta();
+
+                    shark.useRigidbody.AddTorque(transform.up * look.x * 0.01f, ForceMode.VelocityChange);
+                    shark.useRigidbody.AddTorque(transform.right * -look.y * 0.01f, ForceMode.VelocityChange);
+                    shark.useRigidbody.AddTorque(transform.forward * -look.x * 0.01f, ForceMode.VelocityChange);
                 }
 
                 // Exit vehicle
@@ -79,11 +102,38 @@ namespace Shark
                     ExitVehicle();
                 }
 
+                if(GameInput.GetButtonHeld(GameInput.Button.Deconstruct) && shark.energyInterface.hasCharge)
+                {
+                    if (Time.time > sonarTimer)
+                    {
+                        SNCameraRoot.main.SonarPing();
+                        sonarTimer = Time.time + 4f;
+                        energyToConsume += 5f;
+                    }
+                }
+
                 if(GameInput.GetButtonDown(GameInput.Button.AltTool))
                 {
-                    SNCameraRoot.main.SonarPing();
+                    shark.ToggleLights(!shark.lightsEnabled);
+                }
+                if(!shark.energyInterface.hasCharge && shark.lightsEnabled)
+                {
+                    shark.ToggleLights(false);
                 }
             }
+            else
+            {
+                shark.boostCharge = 0f;
+                shark.isBoosting = false;
+                Camera.main.fieldOfView = MiscSettings.fieldOfView;
+            }
+            shark.energyInterface.ConsumeEnergy(energyToConsume);
+
+            Transform trans = shark.playerPosition.transform;
+            Vector3 targetPos = shark.isInFront ? shark.chairFront.localPosition : shark.chairBack.localPosition;
+            Quaternion targetRot = shark.isInFront ? shark.chairFront.localRotation : shark.chairBack.localRotation;
+            trans.localPosition = Vector3.MoveTowards(trans.localPosition, targetPos, 0.1f);
+            trans.localRotation = Quaternion.RotateTowards(trans.localRotation, targetRot, 10f);
         }
 
         void ExitVehicle()
@@ -95,11 +145,11 @@ namespace Shark
                     Player.main.ToNormalMode(false);
                 }
 
-                Vector3 newPos = Player.main.transform.localPosition;
-                newPos.y += 1f;
-                newPos.z += 2f;
+                Vector3 newPos = Player.main.transform.position;
+                newPos += Camera.main.transform.up;
+                newPos += Camera.main.transform.forward;
 
-                Player.main.transform.localPosition = newPos;
+                Player.main.transform.position = newPos;
 
                 Player.main.transform.parent = null;
             }
