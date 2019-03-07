@@ -57,8 +57,10 @@ namespace Shark
             shark.AddOrGet<TechTag>().type = TechType;
             shark.AddOrGet<PrefabIdentifier>().ClassId = ClassID;
 
-            sharkComp.headlights.Add(shark.FindChild("Headlight1").GetComponent<Light>());
-            sharkComp.headlights.Add(shark.FindChild("Headlight2").GetComponent<Light>());
+            Transform headLightParent = shark.transform.Find("Headlights");
+
+            sharkComp.headlights.Add(headLightParent.Find("RightHead").GetComponent<Light>());
+            sharkComp.headlights.Add(headLightParent.Find("LeftHead").GetComponent<Light>());
 
             shark.AddOrGet<SmoothVehicleCamera>().vehicle = sharkComp;
             sharkComp.energyInterface = shark.AddOrGet<EnergyInterface>();
@@ -90,8 +92,6 @@ namespace Shark
 
             sharkComp.modulesRoot = shark.FindChild("UpgradeModules").AddOrGet<ChildObjectIdentifier>();
             energy.storageRoot = energyParent.gameObject.AddOrGet<ChildObjectIdentifier>();
-            sharkComp.leftHandPlug = shark.FindChild("LeftHandWheel").transform;
-            sharkComp.rightHandPlug = shark.FindChild("RightHandWheel").transform;
 
             sharkComp.energyInterface.sources = new EnergyMixin[]
             {
