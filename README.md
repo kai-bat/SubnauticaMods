@@ -18,7 +18,9 @@ A simple mod, lets you change the drab default loading screen to whatever you wa
 
 Adds a precursor themed submersible
 
-*W I P*
+**VERY WIP, NOT YET AVAILABLE**
+
+[Early in-game screenshot](Shark/ingame-screenshot.png)
 
 # Render Distance Changer
 
