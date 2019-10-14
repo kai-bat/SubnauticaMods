@@ -54,16 +54,22 @@
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\Non Steam Games\Subnautica\Subnautica_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\Subnautica\Subnautica_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DestroyPatch.cs" />
     <Compile Include="MainPatch.cs" />
+    <Compile Include="PlayerInteractionPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shark.cs" />
     <Compile Include="SharkControl.cs" />
     <Compile Include="SharkPrefab.cs" />
+    <Compile Include="SharkSound.cs" />
     <Compile Include="SharkTestGUI.cs" />
-    <Compile Include="SmoothVehicleCamera.cs" />
+    <Compile Include="SharkCameraSmooth.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

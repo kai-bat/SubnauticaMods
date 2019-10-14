@@ -8,20 +8,16 @@ using UnityEngine;
 
 namespace Shark
 {
-    [HarmonyPatch(typeof(Object))]
-    [HarmonyPatch("Destroy")]
-    [HarmonyPatch(new Type[]
-    {
-        typeof(Object)
-    })]
+    [HarmonyPatch(typeof(UWE.Utils))]
+    [HarmonyPatch("DestroyWrap")]
     public class DestroyPatch
     {
-        public static bool Prefix(Object __instance, ref Object obj)
+        public static bool Prefix(ref Object o)
         {
             try
             {
-                Console.WriteLine($"{obj.name} destroyed at {Environment.StackTrace}");
-                if(((GameObject)obj).GetComponentInChildren<Shark>()) {
+                if(((GameObject)o).GetComponentInChildren<Shark>()) {
+                    Console.WriteLine($"{o.name} destroyed at {Environment.StackTrace}");
                     Console.WriteLine("THE ABOVE OBJECT CONTAINED THE SHARK, CANCELLING DESTRUCTION");
                     return false;
                 }

@@ -23,7 +23,7 @@ namespace AlienRifle
                 Atlas.Sprite rifleIcon = null;
                 try
                 {
-                    rifleIcon = new Atlas.Sprite(bund.LoadAsset<Sprite>("RifleIcon"));
+                    rifleIcon = ImageUtils.LoadSpriteFromFile("./QMods/AlienRifle/RifleIcon.PNG", TextureFormat.BC7);
                 }
                 catch
                 {

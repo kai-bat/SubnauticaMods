@@ -33,14 +33,14 @@ namespace AlienRifle
                     render.material.shader = Shader.Find("MarmosetUBER");
                 }
 
-                MeshRenderer rend = gobj.transform.GetChild(1).GetComponent<MeshRenderer>();
-                rend.material = gobj.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+                MeshRenderer rend = gobj.transform.Find("Main/MainBody").GetComponent<MeshRenderer>();
+                rend.material = gobj.transform.Find("Main/EnergyGlow").GetComponent<MeshRenderer>().material;
                 rend.material.SetColor("_Emission", new Color(0.2f, 0.2f, 0.2f));
 
                 Console.WriteLine("[AlienRifle] Modifying Transform offset and rotation");
-                Vector3 offset = new Vector3(0, 0.05f, 0.35f);
-                gobj.transform.GetChild(0).localPosition = offset;
-                gobj.transform.GetChild(1).localPosition = offset;
+                Vector3 offset = new Vector3(0, 0.05f, 0.1f);
+                gobj.transform.GetChild(0).localPosition += offset;
+                //gobj.transform.GetChild(1).localPosition = offset;
 
                 Console.WriteLine("[AlienRifle] Adding Essential components");
                 gobj.AddOrGetComponent<PrefabIdentifier>().ClassId = ClassID;
@@ -68,7 +68,7 @@ namespace AlienRifle
                 fixer.techType = TechType;
 
                 Console.WriteLine("[AlienRifle] Adding VFX Component");
-                VFXFabricating vfxfabricating = gobj.transform.GetChild(0).gameObject.AddOrGetComponent<VFXFabricating>();
+                VFXFabricating vfxfabricating = gobj.transform.Find("Main").gameObject.AddOrGetComponent<VFXFabricating>();
                 vfxfabricating.localMinY = -0.4f;
                 vfxfabricating.localMaxY = 0.2f;
                 vfxfabricating.posOffset = new Vector3(-0.054f, 0f, -0.06f);
@@ -77,7 +77,7 @@ namespace AlienRifle
 
                 Console.WriteLine("[AlienRifle] Adding EnergyMixin Component");
                 EnergyMixin AREnergy = gobj.AddOrGetComponent<EnergyMixin>();
-                AREnergy.storageRoot = gobj.transform.GetChild(1).gameObject.AddOrGetComponent<ChildObjectIdentifier>();
+                AREnergy.storageRoot = gobj.transform.Find("Main").gameObject.AddOrGetComponent<ChildObjectIdentifier>();
                 AREnergy.compatibleBatteries = new List<TechType>
                 {
                     TechType.PrecursorIonBattery
@@ -88,7 +88,7 @@ namespace AlienRifle
                     new EnergyMixin.BatteryModels
                     {
                         techType = TechType.PrecursorIonBattery,
-                        model = gobj.transform.GetChild(1).gameObject
+                        model = gobj.transform.Find("Main/EnergyGlow").gameObject
                     }
                 };
 
@@ -109,8 +109,8 @@ namespace AlienRifle
                 rifle.drawSound = stasisrifle.drawSound;
                 rifle.reloadSound = stasisrifle.reloadSound;
 
-                rifle.muzzleFlash = gobj.transform.GetChild(0).GetChild(0).GetComponent<ParticleSystem>();
-                rifle.muzzleSparks = gobj.transform.GetChild(0).GetChild(1).GetComponent<ParticleSystem>();
+                rifle.muzzleFlash = gobj.transform.Find("Main/Particles/Fire").GetComponent<ParticleSystem>();
+                rifle.chargeSparks = gobj.transform.Find("Main/Particles/Charging").GetComponent<ParticleSystem>();
                 Object.Destroy(stasisrifle);
                 Object.Destroy(cannon);
 
@@ -118,11 +118,6 @@ namespace AlienRifle
                 rifle.ikAimRightArm = true;
                 rifle.ikAimLeftArm = true;
                 rifle.useLeftAimTargetOnPlayer = true;
-
-                Console.WriteLine("[AlienRifle] Adding Animator");
-                //rifle.animator = gobj.AddOrGetComponent<Animator>();
-                //GameObject stasis = CraftData.InstantiateFromPrefab(TechType.StasisRifle);
-                //rifle.animator.runtimeAnimatorController = stasis.GetComponent<Animator>().runtimeAnimatorController
 
                 Console.WriteLine("[AlienRifle] Prefab loaded successfully!");
                 return gobj;

@@ -22,48 +22,86 @@ namespace AlienRifle
 
         public FMODAsset shootSound;
 
-        public Animator animator;
         public Camera cam;
 
         public GameObject beamPrefab;
         public ParticleSystem muzzleFlash;
-        public ParticleSystem muzzleSparks;
+        public ParticleSystem chargeSparks;
 
         GameObject mask;
+        Transform leftHand;
+        Transform rightHand;
         Light flash;
-        Light projector;
 
         bool isAiming = false;
         float nextFire = 0f;
+        float charge = 0f;
         bool ready = true;
 
         string id;
 
+        Vector3 startPosition;
+        Vector3 currentPosition;
+
+        Quaternion startRotation;
+        Quaternion currentRotation;
+
+        NightVision vision;
+
         public void Start()
         {
+            leftHand = transform.Find("Main/LeftHand");
+            rightHand = transform.Find("Main/RightHand");
             mask = typeof(Player).GetField("scubaMaskModel", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Player.main) as GameObject;
-            animator = GetComponent<Animator>();
             cam = Player.main.camRoot.mainCamera;
             muzzleFlash.GetComponent<ParticleSystemRenderer>().material.shader = Shader.Find("Particles/Additive");
-            muzzleSparks.GetComponent<ParticleSystemRenderer>().material.shader = Shader.Find("Particles/Additive");
+            var flashmain = muzzleFlash.main;
+            flashmain.playOnAwake = false;
+            chargeSparks.GetComponent<ParticleSystemRenderer>().material.shader = Shader.Find("Particles/Additive");
+            var sparksmain = chargeSparks.main;
+            sparksmain.playOnAwake = false;
+            chargeSparks.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             flash = muzzleFlash.gameObject.AddOrGetComponent<Light>();
             flash.range = 5f;
             flash.color = Color.green;
             flash.intensity = 0f;
 
-            projector = muzzleSparks.gameObject.AddOrGetComponent<Light>();
-            projector.type = LightType.Spot;
-            projector.range = 30f;
-            projector.spotAngle = 20f;
-            projector.intensity = 2f;
-            projector.color = Color.white;
-            projector.enabled = false;
-
             id = GetComponent<PrefabIdentifier>().Id;
+
+            startPosition = transform.localPosition;
+            currentPosition = startPosition;
+
+            startRotation = transform.localRotation;
+            currentRotation = startRotation;
+        }
+
+        void CheckNightVision()
+        {          
+            if(!vision)
+            {
+                if(!cam.GetComponent<NightVision>())
+                {
+                    vision = cam.gameObject.AddComponent<NightVision>();
+                }
+                else
+                {
+                    vision = cam.GetComponent<NightVision>();
+                }
+            }
+        }
+
+        public void Update()
+        {
+            Player.main.armsController.SetWorldIKTarget(leftHand, rightHand);
         }
 
         public void LateUpdate()
         {
+            currentPosition = Vector3.Lerp(currentPosition, startPosition, 0.4f);
+            currentRotation = Quaternion.Lerp(currentRotation, startRotation, 0.4f);
+
+            CheckNightVision();
+
             if(!Player.main.IsInBase() && !Player.main.IsInSubmarine())
             {
                 ready = true;
@@ -81,11 +119,11 @@ namespace AlienRifle
 
             if (isAiming)
             {
-                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, 30f, 0.3f);
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, MiscSettings.fieldOfView/2f, 0.3f);
             }
             else
             {
-                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, 60f, 0.3f);
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, MiscSettings.fieldOfView, 0.3f);
             }
 
             if (cam.fieldOfView >= 55f && Player.main.IsUnderwater())
@@ -98,6 +136,9 @@ namespace AlienRifle
             }
 
             flash.intensity = Mathf.Lerp(flash.intensity, 0f, 0.1f);
+
+            transform.localPosition = currentPosition;
+            transform.localRotation = currentRotation;
         }
 
         public override bool OnRightHandHeld()
@@ -105,15 +146,38 @@ namespace AlienRifle
             bool canUse = this.energyMixin.charge > 0f;
             if (canUse && nextFire < Time.time && ready)
             {
-                nextFire = Time.time + 0.5f;
-                Shoot();
-                FMODUWE.PlayOneShot(shootSound, transform.position, 1f);
-                muzzleFlash.Play();
-                muzzleSparks.Play();
-                flash.intensity = 2f;
+                if (charge >= 1)
+                {
+                    nextFire = Time.time + 0.2f;
+                    charge = 0f;
+                    Shoot();
+                    FMODUWE.PlayOneShot(shootSound, transform.position, 1f);
+                    muzzleFlash.Play();
+                    chargeSparks.Stop();
+                    flash.intensity = 2f;
 
-                energyMixin.ConsumeEnergy(50f);
+                    energyMixin.ConsumeEnergy(50f);
+                }
+                else
+                {
+                    if(!chargeSparks.isPlaying) chargeSparks.Play();
+                    charge += 0.03f;
+                }
             }
+            return true;
+        }
+
+        public override void OnHolster()
+        {
+            charge = 0f;
+            chargeSparks.Stop();
+            Player.main.armsController.SetWorldIKTarget(null, null);
+        }
+
+        public override bool OnRightHandUp()
+        {
+            charge = 0f;
+            chargeSparks.Stop();
             return true;
         }
 
@@ -121,8 +185,8 @@ namespace AlienRifle
         {
             if (ready)
             {
-                projector.enabled = true;
                 isAiming = true;
+                vision.activated = true;
             }
             return true;
         }
@@ -131,14 +195,22 @@ namespace AlienRifle
         {
             if (ready)
             {
-                projector.enabled = false;
                 isAiming = false;
+                vision.activated = false;
             }
             return true;
         }
 
         void Shoot()
         {
+            currentPosition = Vector3.Lerp(currentPosition, startPosition - Vector3.forward * 0.5f, 0.3f);
+
+            Vector3 rot = startRotation.eulerAngles;
+            rot.x -= 30f;
+            Quaternion rotq = Quaternion.Euler(rot);
+
+            currentRotation = Quaternion.Lerp(currentRotation, rotq, 0.3f);
+
             Transform aimTrans = Player.main.camRoot.GetAimingTransform();
             if (Targeting.GetTarget(Player.main.gameObject, 200f, out GameObject hit, out float dist))
             {
@@ -206,10 +278,6 @@ namespace AlienRifle
                 line.SetPosition(0, transform.GetChild(0).position);
                 line.SetPosition(1, transform.position + aimTrans.forward * 200f);
                 Destroy(beam, 0.3f);
-            }
-            if (animator != null)
-            {
-                SafeAnimator.SetBool(animator, "using_tool", true);
             }
         }
 
