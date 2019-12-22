@@ -20,7 +20,7 @@ Adds a precursor themed submersible
 
 **VERY WIP, NOT YET AVAILABLE**
 
-![Early in-game screenshot](Shark/ingame-screenshot.png)
+![Early in-game screenshot](Shark/image.jpg)
 
 # Render Distance Changer
 
