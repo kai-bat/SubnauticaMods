@@ -20,7 +20,7 @@ namespace Shark
 
             bundle = AssetBundle.LoadFromFile(Path.Combine(Environment.CurrentDirectory, "QMods/5H-4RK Submersible/shark"));
 
-            TechType type = TechTypeHandler.AddTechType("Shark", "5H-4RK Submersible", "An ergonomic underwater shuttle designed to mimic fauna in a basic fashion");
+            TechType type = TechTypeHandler.AddTechType("Shark", "5H-4RK Submersible", "An ancient alien vessel designed to mimic local fauna");
 
             SharkPrefab prefab = new SharkPrefab("Shark", "Assets/SharkSubmersible.prefab", type);
             PrefabHandler.RegisterPrefab(prefab);
@@ -30,6 +30,10 @@ namespace Shark
 
             HarmonyInstance harm = HarmonyInstance.Create("com.shark");
             harm.PatchAll(Assembly.GetExecutingAssembly());
+
+            Shark.laserTechType = TechTypeHandler.AddTechType("SharkLaserCannon", "5H-4RK Ranged Combat Module", "Equips the vessel with mid to long range combat capabilities");
+            Shark.ramTechType = TechTypeHandler.AddTechType("SharkBatteringRam", "5H-4RK Momentum-Based Combat Module", "Equips the vessel with hardlight blades to lacerate prey at high velocity");
+            Shark.visionTechType = TechTypeHandler.AddTechType("SharkVision", "5H-4RK Precursor Vision Module", "Allows the vessel's pilot to visualise potential targets through obstructive media");
         }
 
         public static T AddOrGet<T>(this GameObject obj) where T : Component

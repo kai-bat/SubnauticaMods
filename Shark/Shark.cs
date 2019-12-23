@@ -8,11 +8,20 @@ namespace Shark
 {
     public class Shark : Vehicle
     {
+        public override string vehicleDefaultName
+        {
+            get
+            {
+                return "5H-4RK Submersible";
+            }
+        }
+
         public bool isBoosting = false;
         public float boostCharge = 0f;
         public float boostChargeDelta;
 
         public ToggleLights lights;
+        public SharkFireControl weapons;
 
         public bool isInFront = true;
 
@@ -26,9 +35,34 @@ namespace Shark
         public FMOD_CustomEmitter sonarPing;
         public FMODAsset splash;
 
+        public static TechType laserTechType;
+        public static TechType ramTechType;
+        public static TechType visionTechType;
+
+        public override string[] slotIDs
+        {
+            get
+            {
+                return new string[] {
+                    "SharkSlot1",
+                    "SharkSlot2",
+                    "SharkSlot3",
+                    "SharkSlot4"
+                };
+            }
+        }
+
+        public override void OnUpgradeModuleChange(int slotID, TechType techType, bool added)
+        {
+            if(modules.GetCount(laserTechType) > 0)
+            {
+                weapons.upgradeInstalled = true;
+            }
+        }
+
         public override void Awake()
         {
-            
+            base.Awake();
         }
 
         public override void Update()

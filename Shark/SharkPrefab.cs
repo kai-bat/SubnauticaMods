@@ -29,16 +29,10 @@ namespace Shark
             {
                 if (!rend.transform.name.Contains("Window"))
                 {
-                    Texture spec = rend.material.GetTexture("_SpecGlossMap");
-                    Texture norm = rend.material.GetTexture("_BumpMap");
-
                     rend.material.shader = Shader.Find("MarmosetUBER");
-                    rend.material.SetTexture("_SpecTex", spec);
-                    rend.material.SetFloat("_SpecInt", 1);
-                    rend.material.SetTexture("_BumpMap", norm);
                 }
             }
-
+            
             Console.WriteLine("Setting up component");
 
             Shark sharkComp = shark.AddOrGet<Shark>();
@@ -108,11 +102,6 @@ namespace Shark
 
             Transform headLightParent = shark.transform.Find("Headlights");
 
-            /*
-            sharkComp.headlights.Add(headLightParent.Find("RightHead").GetComponent<Light>());
-            sharkComp.headlights.Add(headLightParent.Find("LeftHead").GetComponent<Light>());
-            */
-
             ToggleLights lights = shark.AddOrGet<ToggleLights>();
             lights.lightsParent = headLightParent.gameObject;
             lights.onSound = sea.toggleLights.lightsOnSound.asset;
@@ -173,19 +162,12 @@ namespace Shark
             sharkComp.crushDamage.kBaseCrushDepth = 500f;
             sharkComp.crushDamage.liveMixin = sharkComp.liveMixin;
 
-            shark.AddOrGet<DealDamageOnImpact>();
+            shark.AddOrGet<DealDamageOnImpact>().mirroredSelfDamage = false;
 
             Console.WriteLine("Seats and Locker");
 
             sharkComp.chairFront = shark.FindChild("FrontseatPos").transform;
             sharkComp.chairBack = shark.FindChild("BackseatPos").transform;
-
-            
-            GameObject locker = CraftData.InstantiateFromPrefab(TechType.SmallLocker);
-            locker.transform.parent = shark.FindChild("RearLocker").transform;
-            locker.transform.localPosition = Vector3.zero;
-            locker.transform.localScale *= 0.6f;
-            locker.transform.localEulerAngles = Vector3.zero;
 
             Console.WriteLine("Beacon");
 

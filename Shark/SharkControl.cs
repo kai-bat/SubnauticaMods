@@ -77,14 +77,9 @@ namespace Shark
                             shark.ToggleLights(!shark.lights.GetLightsActive());
                         }
 
-                        if (GameInput.GetButtonDown(GameInput.Button.Deconstruct))
+                        if (GameInput.GetButtonHeld(GameInput.Button.Deconstruct))
                         {
-                            if (sonarTimer < Time.time)
-                            {
-                                sonarTimer = Time.time + 3f;
-                                SNCameraRoot.main.SonarPing();
-                                sound.DoSonarPing();
-                            }
+                            shark.weapons.AttemptShoot();
                         }
 
                         if(GameInput.GetButtonDown(GameInput.Button.Exit))
@@ -93,7 +88,7 @@ namespace Shark
                         }
 
                         float preBoost = shark.boostCharge;
-                        shark.boostCharge += (GameInput.GetButtonHeld(GameInput.Button.RightHand) ?
+                        shark.boostCharge += (GameInput.GetButtonHeld(GameInput.Button.Sprint) ?
                             2f : -2f) * Time.deltaTime;
 
                         shark.boostCharge = Mathf.Clamp01(shark.boostCharge);
@@ -153,12 +148,6 @@ namespace Shark
                         shark.useRigidbody.AddForce(transform.rotation * Vector3.ClampMagnitude(GameInput.GetMoveDirection(), 1f) * 3000f);
                     }
                 }
-                // Don't stabilize when shift is held
-                if (!GameInput.GetButtonHeld(GameInput.Button.Sprint))
-                {
-                    shark.StabilizeRoll();
-                }
-
 
                 shark.useRigidbody.AddTorque(transform.up * lookForce.x * 0.01f, ForceMode.VelocityChange);
                 shark.useRigidbody.AddTorque(transform.right * -lookForce.y * 0.01f, ForceMode.VelocityChange);
