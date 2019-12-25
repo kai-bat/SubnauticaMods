@@ -88,6 +88,7 @@ namespace Shark
             worldForces.underwaterDrag = 1f;
             worldForces.underwaterGravity = 0f;
             worldForces.aboveWaterDrag = 0.5f;
+            worldForces.useRigidbody = shark.GetComponent<Rigidbody>();
 
             sharkComp.worldForces = worldForces;
 
@@ -97,6 +98,51 @@ namespace Shark
             shark.AddOrGet<SkyApplier>().renderers = shark.GetComponentsInChildren<Renderer>();
             shark.AddOrGet<TechTag>().type = TechType;
             shark.AddOrGet<PrefabIdentifier>().ClassId = ClassID;
+            var vfx = shark.AddOrGet<VFXConstructing>();
+            vfx.ghostOverlay = shark.AddOrGet<VFXOverlayMaterial>();
+            var seamothvfx = sea.GetComponentInChildren<VFXConstructing>();
+            vfx.blurOffset = seamothvfx.blurOffset;
+            vfx.lineWidth = seamothvfx.lineWidth;
+            vfx.alphaDetailTexture = seamothvfx.alphaDetailTexture;
+            vfx.alphaEnd = seamothvfx.alphaEnd;
+            vfx.alphaScale = seamothvfx.alphaScale;
+            vfx.alphaTexture = seamothvfx.alphaTexture;
+            vfx.wireColor = new Color(0.4f, 1f, 0.4f);
+            vfx.constructSound = seamothvfx.constructSound;
+            vfx.surfaceSplashSound = seamothvfx.surfaceSplashSound;
+            vfx.delay = seamothvfx.delay;
+            vfx.surfaceSplashFX = seamothvfx.surfaceSplashFX;
+            vfx.surfaceSplashVelocity = seamothvfx.surfaceSplashVelocity;
+
+            for(int i = 0; i < shark.transform.childCount; i++)
+            {
+                if(shark.transform.GetChild(i).name.Contains("buildbotpath"))
+                {
+                    GameObject.Destroy(shark.transform.GetChild(i).gameObject);
+                }
+            }
+
+            foreach(BuildBotPath path in sea.GetComponentsInChildren<BuildBotPath>())
+            {
+                Transform newPathParent = new GameObject("buildbotpath").transform;
+                newPathParent.parent = shark.transform;
+                newPathParent.localPosition = Vector3.zero;
+                newPathParent.localEulerAngles = Vector3.zero;
+                BuildBotPath newPath = newPathParent.gameObject.AddComponent<BuildBotPath>();
+
+                newPath.points = new Transform[path.points.Length];
+
+                int num = 0;
+                foreach (Transform trans in path.points)
+                {
+                    GameObject clone = new GameObject("pathnode" + num);
+                    clone.transform.parent = newPathParent;
+                    clone.transform.localPosition = trans.localPosition;
+                    clone.transform.localRotation = trans.localRotation;
+                    newPath.points[num] = clone.transform;
+                    num++;
+                }
+            }
 
             Console.WriteLine("Setting up headlights");
 
@@ -153,6 +199,9 @@ namespace Shark
                 energy
             };
 
+            sharkComp.weapons = shark.AddOrGet<SharkFireControl>();
+            sharkComp.weapons.weaponParent = shark.FindChild("Weapons");
+
             Console.WriteLine("Adding GUI");
 
             shark.AddOrGet<SharkTestGUI>().shark = sharkComp;
@@ -164,7 +213,7 @@ namespace Shark
 
             shark.AddOrGet<DealDamageOnImpact>().mirroredSelfDamage = false;
 
-            Console.WriteLine("Seats and Locker");
+            Console.WriteLine("Seats");
 
             sharkComp.chairFront = shark.FindChild("FrontseatPos").transform;
             sharkComp.chairBack = shark.FindChild("BackseatPos").transform;
@@ -175,14 +224,20 @@ namespace Shark
 
             GameObject pingObj = Object.Instantiate(Resources.Load<GameObject>("VFX/xSignal"), shark.transform);
             PingInstance ping = pingObj.GetComponent<PingInstance>();
-            ping.SetLabel("5H-4RK Explorer");
+            ping.SetLabel("5H-4RK");
             ping.displayPingInManager = true;
             ping.pingType = pingType;
             ping.SetVisible(true);
+            pingObj.transform.parent = shark.transform;
+            pingObj.transform.localPosition = Vector3.zero;
+            pingObj.transform.localEulerAngles = Vector3.zero;
 
             Console.WriteLine("Patching into cached pingtypestrings");
 
-            PingManager.sCachedPingTypeStrings.valueToString.Add(pingType, "SharkPing");
+            if (!PingManager.sCachedPingTypeStrings.valueToString.ContainsKey(pingType))
+            {
+                PingManager.sCachedPingTypeStrings.valueToString.Add(pingType, "SharkPing");
+            }
 
             return shark;
         }

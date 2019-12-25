@@ -67,6 +67,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstructorInputPatch.cs" />
+    <Compile Include="CreatureSpawnPatch.cs" />
+    <Compile Include="CreatureVision.cs" />
     <Compile Include="MainPatch.cs" />
     <Compile Include="PlayerInteractionPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,6 +80,7 @@
     <Compile Include="SharkSound.cs" />
     <Compile Include="SharkTestGUI.cs" />
     <Compile Include="SharkCameraSmooth.cs" />
+    <Compile Include="SharkVisionControl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

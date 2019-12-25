@@ -87,6 +87,19 @@ namespace Shark
                             ExitVehicle();
                         }
 
+                        if(GameInput.GetButtonDown(GameInput.Button.RightHand))
+                        {
+                            ErrorMessage.AddMessage("TOGGLING VISION");
+                            SharkVisionControl._enabled = !SharkVisionControl._enabled;
+                        }
+
+                        if(SharkVisionControl.active)
+                        {
+                            SonarScreenFX fx = SNCameraRoot.main.mainCam.GetComponent<SonarScreenFX>();
+                            fx.enabled = true;
+                            fx.pingDistance = 0.5f;
+                        }
+
                         float preBoost = shark.boostCharge;
                         shark.boostCharge += (GameInput.GetButtonHeld(GameInput.Button.Sprint) ?
                             2f : -2f) * Time.deltaTime;
@@ -141,13 +154,15 @@ namespace Shark
                 {
                     if (shark.isBoosting)
                     {
-                        shark.useRigidbody.AddForce(transform.forward * 2f, ForceMode.VelocityChange);
+                        shark.useRigidbody.AddForce(transform.forward * 10000f);
                     }
                     else
                     {
                         shark.useRigidbody.AddForce(transform.rotation * Vector3.ClampMagnitude(GameInput.GetMoveDirection(), 1f) * 3000f);
                     }
                 }
+
+                shark.StabilizeRoll();
 
                 shark.useRigidbody.AddTorque(transform.up * lookForce.x * 0.01f, ForceMode.VelocityChange);
                 shark.useRigidbody.AddTorque(transform.right * -lookForce.y * 0.01f, ForceMode.VelocityChange);
@@ -161,13 +176,9 @@ namespace Shark
             {
                 Player.main.transform.parent = null;
 
-                Player.main.ToNormalMode(false);
-
-                Vector3 newPos = Player.main.transform.position;
-                newPos += transform.up;
-                newPos += transform.forward * 2f;
-
-                Player.main.transform.position = newPos;
+                Player.main.ToNormalMode(true);
+                Player.main.mode = Player.Mode.Normal;
+                Player.main.armsController.SetWorldIKTarget(null, null);
             }
         }
     }

@@ -20,8 +20,10 @@ namespace Shark
         public float boostCharge = 0f;
         public float boostChargeDelta;
 
+
         public ToggleLights lights;
         public SharkFireControl weapons;
+        public SharkVisionControl vision;
 
         public bool isInFront = true;
 
@@ -62,7 +64,7 @@ namespace Shark
 
         public override void Awake()
         {
-            base.Awake();
+            //base.Awake();
         }
 
         public override void Update()
@@ -90,11 +92,16 @@ namespace Shark
         public override void OnPilotModeBegin()
         {
             Player.main.armsController.SetWorldIKTarget(leftHandPlug, rightHandPlug);
+            if (!vision)
+            {
+                ErrorMessage.AddMessage("ADDING VISION COMPONENT");
+                vision = gameObject.AddComponent<SharkVisionControl>();
+            }
         }
 
         public override void OnPilotModeEnd()
         {
-            OnPilotModeEnd();
+            base.OnPilotModeEnd();
         }
 
         public void ToggleLights(bool on)

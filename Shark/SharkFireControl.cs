@@ -22,7 +22,7 @@ namespace Shark
         {
             if(!upgradeInstalled)
             {
-
+                return;
             }
         }
     }
