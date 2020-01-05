@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Linq;
 using System.Text;
 using SMLHelper.V2.Assets;
-using SMLHelper.V2.Handlers;
+using SMLHelper.V2.Utility;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -25,9 +25,9 @@ namespace Shark
 
             GameObject shark = MainPatch.bundle.LoadAsset<GameObject>("SharkPrefab.prefab");
             
-            foreach(Renderer rend in shark.GetComponentsInChildren<Renderer>())
+            foreach(Renderer rend in shark.GetComponentsInChildren<MeshRenderer>())
             {
-                if (!rend.transform.name.Contains("Window"))
+                if (!rend.name.Contains("Window") && !rend.name.Contains("Sonar") && !rend.name.Contains("EnergyBlade"))
                 {
                     rend.material.shader = Shader.Find("MarmosetUBER");
                 }
@@ -35,11 +35,18 @@ namespace Shark
             
             Console.WriteLine("Setting up component");
 
-            Shark sharkComp = shark.AddOrGet<Shark>();
+            Shark sharkComp = shark.EnsureComponent<Shark>();
             sharkComp.playerSits = true;
-            sharkComp.playerPosition = shark.transform.Find("SeatPosition").gameObject;
+            sharkComp.playerPosition = shark.transform.Find("Scaler/SeatPosition").gameObject;
             sharkComp.handLabel = "Pilot 5H-4RK";
             sharkComp.controlSheme = Vehicle.ControlSheme.Submersible;
+            sharkComp.mainAnimator = shark.EnsureComponent<Animator>();
+            sharkComp.mainAnimator.runtimeAnimatorController = sea.mainAnimator.runtimeAnimatorController;
+
+            while(shark.GetComponent<FMOD_CustomLoopingEmitter>())
+            {
+                GameObject.Destroy(shark.GetComponent<FMOD_CustomLoopingEmitter>());
+            }
 
             sharkComp.chargeUp = shark.AddComponent<FMOD_CustomLoopingEmitter>();
             sharkComp.chargeUp.followParent = true;
@@ -51,26 +58,28 @@ namespace Shark
             sharkComp.normalMove = shark.AddComponent<FMOD_CustomLoopingEmitter>();
             sharkComp.normalMove.followParent = true;
             sharkComp.normalMove.asset = sea.engineSound.engineRpmSFX.asset;
-            sharkComp.sonarPing = shark.AddComponent<FMOD_CustomEmitter>();
-            sharkComp.sonarPing.restartOnPlay = true;
-            sharkComp.sonarPing.followParent = true;
-            sharkComp.sonarPing.asset = sea.sonarSound.asset;
             sharkComp.chargeFinished = exo.jumpSound;
             sharkComp.splash = sea.splashSound;
 
-            sharkComp.rightHandPlug = sharkComp.transform.Find("HandTargets/Right");
-            sharkComp.leftHandPlug = sharkComp.transform.Find("HandTargets/Left");
+            sharkComp.welcomeNotification = shark.EnsureComponent<VoiceNotification>();
+            sharkComp.welcomeNotification.text = "5H-4RK: Welcome aboard, Captain";
+            sharkComp.welcomeNotification.minInterval = exo.welcomeNotification.minInterval;
+            sharkComp.welcomeNotification.sound = exo.welcomeNotification.sound;
+
+            sharkComp.rightHandPlug = sharkComp.transform.Find("Scaler/HandTargets/Right");
+            sharkComp.leftHandPlug = sharkComp.transform.Find("Scaler/HandTargets/Left");
+            sharkComp.window = shark.transform.Find("Scaler/SharkMesh/Sonar").gameObject;
 
             Console.WriteLine("Adding control");
 
-            SharkControl control = shark.AddOrGet<SharkControl>();
+            SharkControl control = shark.EnsureComponent<SharkControl>();
             control.shark = sharkComp;
-            control.sound = shark.AddOrGet<SharkSound>();
+            control.sound = shark.EnsureComponent<SharkSound>();
             control.sound.shark = sharkComp;
 
             Console.WriteLine("Adding health");
 
-            LiveMixin mixin = shark.AddOrGet<LiveMixin>();
+            LiveMixin mixin = shark.EnsureComponent<LiveMixin>();
             LiveMixinData data = new LiveMixinData();
             mixin.health = 100f;
             data.maxHealth = 100f;
@@ -83,7 +92,7 @@ namespace Shark
 
             Console.WriteLine("Adding forces");
 
-            WorldForces worldForces = shark.AddOrGet<WorldForces>();
+            WorldForces worldForces = shark.EnsureComponent<WorldForces>();
             worldForces.aboveWaterGravity = 9.8f;
             worldForces.underwaterDrag = 1f;
             worldForces.underwaterGravity = 0f;
@@ -94,12 +103,11 @@ namespace Shark
 
             Console.WriteLine("Setting up other components");
 
-            shark.AddOrGet<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
-            shark.AddOrGet<SkyApplier>().renderers = shark.GetComponentsInChildren<Renderer>();
-            shark.AddOrGet<TechTag>().type = TechType;
-            shark.AddOrGet<PrefabIdentifier>().ClassId = ClassID;
-            var vfx = shark.AddOrGet<VFXConstructing>();
-            vfx.ghostOverlay = shark.AddOrGet<VFXOverlayMaterial>();
+            shark.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Global;
+            shark.EnsureComponent<SkyApplier>().renderers = shark.GetComponentsInChildren<Renderer>();
+            shark.EnsureComponent<TechTag>().type = TechType;
+            shark.EnsureComponent<PrefabIdentifier>().ClassId = ClassID;
+            var vfx = shark.EnsureComponent<VFXConstructing>();
             var seamothvfx = sea.GetComponentInChildren<VFXConstructing>();
             vfx.blurOffset = seamothvfx.blurOffset;
             vfx.lineWidth = seamothvfx.lineWidth;
@@ -107,12 +115,16 @@ namespace Shark
             vfx.alphaEnd = seamothvfx.alphaEnd;
             vfx.alphaScale = seamothvfx.alphaScale;
             vfx.alphaTexture = seamothvfx.alphaTexture;
-            vfx.wireColor = new Color(0.4f, 1f, 0.4f);
             vfx.constructSound = seamothvfx.constructSound;
             vfx.surfaceSplashSound = seamothvfx.surfaceSplashSound;
             vfx.delay = seamothvfx.delay;
             vfx.surfaceSplashFX = seamothvfx.surfaceSplashFX;
             vfx.surfaceSplashVelocity = seamothvfx.surfaceSplashVelocity;
+
+            var fx = shark.EnsureComponent<SharkFXControl>();
+            fx.shark = sharkComp;
+            fx.zoomFX = shark.transform.Find("Scaler/FX/Boost").GetComponent<ParticleSystem>();
+            fx.moveTrail = shark.transform.Find("Scaler/FX/Trail").GetComponent<TrailRenderer>();
 
             for(int i = 0; i < shark.transform.childCount; i++)
             {
@@ -146,9 +158,9 @@ namespace Shark
 
             Console.WriteLine("Setting up headlights");
 
-            Transform headLightParent = shark.transform.Find("Headlights");
+            Transform headLightParent = shark.transform.Find("Scaler/Headlights");
 
-            ToggleLights lights = shark.AddOrGet<ToggleLights>();
+            ToggleLights lights = shark.EnsureComponent<ToggleLights>();
             lights.lightsParent = headLightParent.gameObject;
             lights.onSound = sea.toggleLights.lightsOnSound.asset;
             lights.offSound = sea.toggleLights.lightsOffSound.asset;
@@ -156,77 +168,110 @@ namespace Shark
 
             Console.WriteLine("Adding smooth cam");
 
-            SharkCameraSmooth camControl = shark.AddOrGet<SharkCameraSmooth>();
+            SharkCameraSmooth camControl = shark.EnsureComponent<SharkCameraSmooth>();
             camControl.shark = sharkComp;
             control.cam = camControl;
-            sharkComp.energyInterface = shark.AddOrGet<EnergyInterface>();
 
             Console.WriteLine("Adding battery power");
 
-            Transform energyParent = shark.FindChild("BatteryPower").transform;
+            Transform energyParent = shark.transform.Find("Scaler/BatteryPower").transform;
 
-            EnergyMixin energy = energyParent.gameObject.AddOrGet<EnergyMixin>();
+            GameObject ionCrystal = CraftData.GetPrefabForTechType(TechType.PrecursorIonCrystal);
+
+            sharkComp.energyInterface = shark.EnsureComponent<EnergyInterface>();
+
+            EnergyMixin energy = energyParent.gameObject.EnsureComponent<EnergyMixin>();
             lights.energyMixin = energy;
-            energy.defaultBattery = TechType.PowerCell;
             energy.allowBatteryReplacement = true;
             energy.compatibleBatteries = new List<TechType>
             {
-                TechType.PowerCell,
-                TechType.PrecursorIonPowerCell
+                Shark.internalBattery
             };
-            EnergyMixin.BatteryModels model = new EnergyMixin.BatteryModels();
-            model.model = energyParent.Find("RegularBattery").gameObject;
-            model.techType = TechType.PowerCell;
-            EnergyMixin.BatteryModels model2 = new EnergyMixin.BatteryModels();
-            model2.model = energyParent.Find("IonBattery").gameObject;
-            model2.techType = TechType.PrecursorIonPowerCell;
 
+            EnergyMixin.BatteryModels model = new EnergyMixin.BatteryModels();
+            model.model = energyParent.Find("PowerCube").gameObject;
+            model.model.GetComponent<MeshFilter>().mesh = MainPatch.bundle.LoadAsset<GameObject>("ioncube.obj").GetComponentInChildren<MeshFilter>().mesh;
+            MeshRenderer meshRend = model.model.GetComponent<MeshRenderer>();
+            meshRend.material = new Material(ionCrystal.GetComponentInChildren<MeshRenderer>().material);
+            model.model.transform.localScale = ionCrystal.GetComponentInChildren<MeshFilter>().transform.lossyScale;
+            model.techType = Shark.internalBattery;
             energy.batteryModels = new EnergyMixin.BatteryModels[]
             {
                 model,
-                model2
             };
 
             energy.controlledObjects = new GameObject[] { };
-
-            Console.WriteLine("Setting up upgrade modules");
-
-            sharkComp.modulesRoot = shark.FindChild("UpgradeModules").AddOrGet<ChildObjectIdentifier>();
-            energy.storageRoot = energyParent.gameObject.AddOrGet<ChildObjectIdentifier>();
+            energy.storageRoot = energyParent.gameObject.EnsureComponent<ChildObjectIdentifier>();
 
             sharkComp.energyInterface.sources = new EnergyMixin[]
             {
                 energy
             };
 
-            sharkComp.weapons = shark.AddOrGet<SharkFireControl>();
-            sharkComp.weapons.weaponParent = shark.FindChild("Weapons");
+            var energySlot = energyParent.Find("InteractionHandler").gameObject.EnsureComponent<SharkEnergySlot>();
+            energySlot.shark = sharkComp;
+
+            Console.WriteLine("Setting up upgrade modules");
+
+            sharkComp.modulesRoot = shark.transform.Find("Scaler/UpgradeModules").gameObject.EnsureComponent<ChildObjectIdentifier>();
+
+            sharkComp.weapons = shark.EnsureComponent<SharkFireControl>();
+            sharkComp.weapons.weaponFXParent = shark.transform.Find("Scaler/Weapons").gameObject;
+            sharkComp.weapons.weaponModel = shark.transform.Find("Scaler/SharkMesh/Lasers").gameObject;
+            sharkComp.weapons.upgradeInstalled = false;
+
+            sharkComp.blink = shark.EnsureComponent<SharkBlinkControl>();
+
+            var upgradeconsole = sharkComp.modulesRoot.gameObject.EnsureComponent<VehicleUpgradeConsoleInput>();
+            sharkComp.upgradesInput = upgradeconsole;
+            upgradeconsole.slots = new VehicleUpgradeConsoleInput.Slot[4];
+
+            Transform modules = sharkComp.modulesRoot.transform;
+            upgradeconsole.flap = modules.Find("Flap");
+            upgradeconsole.collider = modules.GetComponent<Collider>();
+            upgradeconsole.timeClose = 0f;
+            upgradeconsole.timeOpen = 0f;
+
+            int j = 0;
+            foreach (string slot in sharkComp.slotIDs)
+            {
+                if(!Equipment.slotMapping.ContainsKey(slot))
+                {
+                    Equipment.slotMapping.Add(slot, (EquipmentType)MainPatch.sharkTech);
+                }
+
+                GameObject nextSlot = shark.transform.Find("Scaler/SharkMesh/Upgrades/Slot" + (j + 1)).gameObject;
+
+                upgradeconsole.slots[j] = new VehicleUpgradeConsoleInput.Slot() {
+                    id = slot,
+                    model = nextSlot
+                };
+                j++;
+            }
 
             Console.WriteLine("Adding GUI");
 
-            shark.AddOrGet<SharkTestGUI>().shark = sharkComp;
+            shark.EnsureComponent<SharkTestGUI>().shark = sharkComp;
 
-            sharkComp.crushDamage = shark.AddOrGet<CrushDamage>();
+            sharkComp.crushDamage = shark.EnsureComponent<CrushDamage>();
             sharkComp.crushDamage.crushDepth = 500f;
             sharkComp.crushDamage.kBaseCrushDepth = 500f;
             sharkComp.crushDamage.liveMixin = sharkComp.liveMixin;
+            
+            shark.EnsureComponent<SharkUIControl>().shark = sharkComp;
 
-            shark.AddOrGet<DealDamageOnImpact>().mirroredSelfDamage = false;
-
-            Console.WriteLine("Seats");
-
-            sharkComp.chairFront = shark.FindChild("FrontseatPos").transform;
-            sharkComp.chairBack = shark.FindChild("BackseatPos").transform;
+            shark.EnsureComponent<DealDamageOnImpact>().mirroredSelfDamage = false;
 
             Console.WriteLine("Beacon");
 
-            PingType pingType = (PingType)9999;
+            PingType pingType = (PingType)MainPatch.sharkTech;
 
-            GameObject pingObj = Object.Instantiate(Resources.Load<GameObject>("VFX/xSignal"), shark.transform);
+            GameObject pingObj = Object.Instantiate(Resources.Load<GameObject>("VFX/xSignal"), shark.transform.position, Quaternion.identity);
             PingInstance ping = pingObj.GetComponent<PingInstance>();
             ping.SetLabel("5H-4RK");
             ping.displayPingInManager = true;
             ping.pingType = pingType;
+            ping._label = "5H-4RK";
             ping.SetVisible(true);
             pingObj.transform.parent = shark.transform;
             pingObj.transform.localPosition = Vector3.zero;

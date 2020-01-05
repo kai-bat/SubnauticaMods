@@ -24,22 +24,27 @@ namespace Shark
         public ToggleLights lights;
         public SharkFireControl weapons;
         public SharkVisionControl vision;
+        public SharkBlinkControl blink;
 
-        public bool isInFront = true;
-
-        public Transform chairFront;
-        public Transform chairBack;
+        public GameObject window;
 
         public FMODAsset chargeFinished;
         public FMOD_CustomLoopingEmitter chargeUp;
         public FMOD_CustomLoopingEmitter boost;
         public FMOD_CustomLoopingEmitter normalMove;
-        public FMOD_CustomEmitter sonarPing;
         public FMODAsset splash;
 
         public static TechType laserTechType;
         public static TechType ramTechType;
         public static TechType visionTechType;
+        public static TechType shieldTechType;
+        public static TechType mineTechType;
+        public static TechType blinkTechType;
+
+        public static TechType internalBattery;
+        public static TechType depletedIonCube;
+
+        public GameObject clipTest;
 
         public override string[] slotIDs
         {
@@ -56,20 +61,41 @@ namespace Shark
 
         public override void OnUpgradeModuleChange(int slotID, TechType techType, bool added)
         {
-            if(modules.GetCount(laserTechType) > 0)
+            weapons.upgradeInstalled = modules.GetCount(laserTechType) > 0;
+            if(modules.GetCount(visionTechType) == 0)
             {
-                weapons.upgradeInstalled = true;
+                SharkVisionControl._enabled = false;
             }
+        }
+
+        public override void OnUpgradeModuleToggle(int slotID, bool active)
+        {
+        }
+
+        public override void OnUpgradeModuleUse(TechType techType, int slotID)
+        {
+            if (techType == visionTechType)
+            {
+                SharkVisionControl._enabled = !SharkVisionControl._enabled;
+            }
+            else if(techType == blinkTechType)
+            {
+                blink.AttemptBlink(this);
+            }
+        }
+
+        public override void Start()
+        {
+            //base.Start();
         }
 
         public override void Awake()
         {
-            //base.Awake();
+            base.Awake();
         }
 
         public override void Update()
         {
-            
         }
 
         public override void FixedUpdate()
@@ -87,20 +113,35 @@ namespace Shark
                 }
                 lastPilotingState = pilotingMode;
             }
+
+            docked = false;
+
+            window.SetActive(SharkVisionControl.active);
+        }
+
+        public override void EnterVehicle(Player player, bool teleport, bool playEnterAnimation = true)
+        {
+            base.EnterVehicle(player, true, false);
         }
 
         public override void OnPilotModeBegin()
         {
             Player.main.armsController.SetWorldIKTarget(leftHandPlug, rightHandPlug);
+            Player.main.inSeamoth = true;
             if (!vision)
             {
-                ErrorMessage.AddMessage("ADDING VISION COMPONENT");
                 vision = gameObject.AddComponent<SharkVisionControl>();
             }
+            base.OnPilotModeBegin();
         }
 
         public override void OnPilotModeEnd()
         {
+            Player.main.armsController.SetWorldIKTarget(null, null);
+            Player.main.inSeamoth = false;
+            isBoosting = false;
+            boostCharge = 0f;
+            boostChargeDelta = 0f;
             base.OnPilotModeEnd();
         }
 

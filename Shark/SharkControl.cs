@@ -16,9 +16,7 @@ namespace Shark
         public SharkSound sound;
         public SonarVision vision;
 
-        float sonarTimer = 0f;
         Vector2 lookForce;
-        LayerMask mask;
 
         void Awake()
         {
@@ -27,7 +25,7 @@ namespace Shark
             shark.useRigidbody.mass = 200f;
             shark.useRigidbody.useGravity = false;
 
-            mainCollision = transform.Find("Collision").gameObject;
+            mainCollision = transform.Find("Scaler/Collision").gameObject;
         }
 
         void OnDestroy()
@@ -54,100 +52,52 @@ namespace Shark
             // Process Controls
             if(shark.GetPilotingMode())
             {
-                if (Input.GetKeyDown(KeyCode.X))
-                {
-                    shark.isInFront = !shark.isInFront;
-
-                    if(shark.isInFront)
-                    {
-                        shark.OnPilotModeBegin();
-                    }
-                    else
-                    {
-                        shark.OnPilotModeEnd();
-                    }
-                }
-
                 if (shark.energyInterface.hasCharge)
                 {
-                    if (shark.isInFront)
+                    if (GameInput.GetButtonDown(GameInput.Button.AltTool))
                     {
-                        if(GameInput.GetButtonDown(GameInput.Button.AltTool))
-                        {
-                            shark.ToggleLights(!shark.lights.GetLightsActive());
-                        }
-
-                        if (GameInput.GetButtonHeld(GameInput.Button.Deconstruct))
-                        {
-                            shark.weapons.AttemptShoot();
-                        }
-
-                        if(GameInput.GetButtonDown(GameInput.Button.Exit))
-                        {
-                            ExitVehicle();
-                        }
-
-                        if(GameInput.GetButtonDown(GameInput.Button.RightHand))
-                        {
-                            ErrorMessage.AddMessage("TOGGLING VISION");
-                            SharkVisionControl._enabled = !SharkVisionControl._enabled;
-                        }
-
-                        if(SharkVisionControl.active)
-                        {
-                            SonarScreenFX fx = SNCameraRoot.main.mainCam.GetComponent<SonarScreenFX>();
-                            fx.enabled = true;
-                            fx.pingDistance = 0.5f;
-                        }
-
-                        float preBoost = shark.boostCharge;
-                        shark.boostCharge += (GameInput.GetButtonHeld(GameInput.Button.Sprint) ?
-                            2f : -2f) * Time.deltaTime;
-
-                        shark.boostCharge = Mathf.Clamp01(shark.boostCharge);
-                        float postBoost = shark.boostCharge;
-
-                        shark.isBoosting = shark.boostCharge == 1f;
-                        Camera.main.fieldOfView = Mathf.Lerp(MiscSettings.fieldOfView, MiscSettings.fieldOfView * 1.3f, shark.boostCharge);
-
-                        shark.boostChargeDelta = postBoost - preBoost;
-
-                        // Look rotation
-                        lookForce = GameInput.GetLookDelta();
+                        shark.ToggleLights(!shark.lights.GetLightsActive());
                     }
-                    else
+
+                    if (GameInput.GetButtonHeld(GameInput.Button.RightHand))
                     {
-                        ResetCamera();
+                        shark.weapons.AttemptShoot();
                     }
+
+                    if (GameInput.GetButtonDown(GameInput.Button.Exit))
+                    {
+                        ExitVehicle();
+                    }
+
+                    float preBoost = shark.boostCharge;
+                    shark.boostCharge += (GameInput.GetButtonHeld(GameInput.Button.Sprint) ?
+                        2f : -2f) * Time.deltaTime;
+
+                    shark.boostCharge = Mathf.Clamp01(shark.boostCharge);
+                    float postBoost = shark.boostCharge;
+
+                    shark.isBoosting = shark.boostCharge == 1f;
+
+                    if(isAboveWater)
+                    {
+                        shark.isBoosting = false;
+                    }
+
+                    shark.boostChargeDelta = postBoost - preBoost;
+
+                    // Look rotation
+                    lookForce = GameInput.GetLookDelta();
                 }
                 else
                 {
                     shark.ToggleLights(false);
-                    ResetCamera();
                 }
             }
-            else
-            {
-                ResetCamera();
-            }
-
-            Transform trans = shark.playerPosition.transform;
-            Vector3 targetPos = shark.isInFront ? shark.chairFront.localPosition : shark.chairBack.localPosition;
-            Quaternion targetRot = shark.isInFront ? shark.chairFront.localRotation : shark.chairBack.localRotation;
-            trans.localPosition = Vector3.MoveTowards(trans.localPosition, targetPos, 5f*Time.deltaTime);
-            trans.localRotation = Quaternion.RotateTowards(trans.localRotation, targetRot, 500f*Time.deltaTime);
-        }
-
-        void ResetCamera()
-        {
-            shark.boostCharge = 0f;
-            shark.isBoosting = false;
-            cam.Reset();
         }
 
         void FixedUpdate()
         {
-            if (shark.GetPilotingMode() && shark.isInFront && shark.energyInterface.hasCharge)
+            if (shark.GetPilotingMode() && shark.energyInterface.hasCharge)
             {
                 bool isInWater = transform.position.y < Ocean.main.GetOceanLevel() && !shark.precursorOutOfWater;
                 if (isInWater)
@@ -179,6 +129,7 @@ namespace Shark
                 Player.main.ToNormalMode(true);
                 Player.main.mode = Player.Mode.Normal;
                 Player.main.armsController.SetWorldIKTarget(null, null);
+                shark.window.SetActive(false);
             }
         }
     }

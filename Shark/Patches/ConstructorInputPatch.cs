@@ -46,19 +46,44 @@ namespace Shark
         }
     }
 
+    [HarmonyPatch(typeof(ConstructorInput))]
+    [HarmonyPatch(nameof(ConstructorInput.OnCraftingEnd))]
+    public static class ConstructorFinishPatch
+    {
+        public static void Postfix(ConstructorInput __instance)
+        {
+            foreach (GameObject bot in __instance.constructor.buildBots)
+            {
+                LineRenderer rend = bot.GetComponent<ConstructorBuildBot>().lineRenderer;
+                rend.startColor = Color.cyan;
+                rend.endColor = Color.red;
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(VFXConstructing))]
     [HarmonyPatch(nameof(VFXConstructing.Construct))]
     public static class ConstructFXPatch
     {
         static Color col = new Color(0.4f, 1f, 0.4f);
 
-        public static void Postfix(VFXConstructing __instance)
+        public static void Prefix(VFXConstructing __instance)
         {
-            Shark shark = __instance.GetComponent<Shark>();
-            if(!shark)
+            if (CraftData.GetTechType(__instance.gameObject) != MainPatch.sharkTech)
             {
                 return;
             }
+            __instance.wireColor = col;
+        }
+
+        public static void Postfix(VFXConstructing __instance)
+        {
+            if(CraftData.GetTechType(__instance.gameObject) != MainPatch.sharkTech)
+            {
+                return;
+            }
+            __instance.ghostMaterial = new Material(__instance.ghostMaterial);
+            __instance.ghostOverlay.material = __instance.ghostMaterial;
             __instance.ghostMaterial.color = col;
         }
     }

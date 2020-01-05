@@ -22,6 +22,7 @@ namespace Shark
 
                     GUILayout.Label($"Energy: {charge}/{capacity}");
                     GUILayout.Label($"Health: {shark.liveMixin.health}/{shark.liveMixin.maxHealth}");
+                    GUILayout.Label($"Vision: " + (SharkVisionControl.active ? "Active" : "Inactive"));
                 }
                 catch {  }
             }

@@ -21,22 +21,15 @@ namespace Shark
                 Vector2 look = GameInput.GetLookDelta();
                 Quaternion cameraRot = MainCameraControl.main.transform.localRotation;
 
-                if (shark.isInFront)
-                {
-                    cameraRot = Quaternion.Lerp(cameraRot, Quaternion.identity, 0.1f);
-                    smoothLookDelta = Vector2.Lerp(smoothLookDelta, look, 0.1f);
-                }
-                else
-                {
-                    smoothLookDelta = look;
-                }
+                cameraRot = Quaternion.Lerp(cameraRot, Quaternion.identity, 0.1f);
+                smoothLookDelta = Vector2.Lerp(smoothLookDelta, look, 0.1f);
                 Vector3 euler = cameraRot.eulerAngles;
                 euler.x -= smoothLookDelta.y;
                 euler.y += smoothLookDelta.x;
                 rearCamTarget.x -= look.y;
                 rearCamTarget.y += look.x;
 
-                if (shark.isBoosting && shark.isInFront)
+                if (shark.isBoosting)
                 {
                     euler.y += UnityEngine.Random.value * 0.7f;
                     euler.x += UnityEngine.Random.value * 0.7f;
@@ -45,14 +38,7 @@ namespace Shark
                 rearCamTarget.x = Mathf.Clamp(rearCamTarget.x, -80, 80f);
                 rearCamTarget.y = Mathf.Clamp(rearCamTarget.y, -80, 80f);
 
-                if (!shark.isInFront)
-                {
-                    euler = rearCamTarget;
-                }
-                else
-                {
-                    rearCamTarget = Vector2.zero;
-                }
+                rearCamTarget = Vector2.zero;
 
                 euler = Vector3.ClampMagnitude(euler, 80f);
 
@@ -66,11 +52,6 @@ namespace Shark
                 MainCameraControl.main.transform.localRotation = cameraRot;
                 rearCamTarget = Vector2.zero;
             }
-        }
-
-        public void Reset()
-        {
-            Camera.main.fieldOfView = MiscSettings.fieldOfView;
         }
     }
 }

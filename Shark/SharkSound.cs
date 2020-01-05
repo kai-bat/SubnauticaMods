@@ -10,11 +10,6 @@ namespace Shark
     {
         public Shark shark;
 
-        public void DoSonarPing()
-        {
-            shark.sonarPing.Play();
-        }
-
         public void DoSplash()
         {
             //FMODUWE.PlayOneShot(shark.splash, transform.position);
@@ -22,7 +17,7 @@ namespace Shark
 
         public void Update()
         {
-            if (shark.isInFront && shark.GetPilotingMode())
+            if (shark.GetPilotingMode())
             {
                 if (shark.boostCharge == 1 && shark.boostChargeDelta > 0f)
                 {

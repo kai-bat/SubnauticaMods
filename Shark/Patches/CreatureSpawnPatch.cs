@@ -15,7 +15,12 @@ namespace Shark
         {
             if(!__instance.GetComponent<CreatureVision>())
             {
-                foreach (SkinnedMeshRenderer mesh in __instance.GetComponentsInChildren<SkinnedMeshRenderer>())
+                foreach (Renderer mesh in __instance.GetComponentsInChildren<Renderer>())
+                {
+                    mesh.gameObject.AddComponent<CreatureVision>();
+                }
+
+                foreach (Renderer mesh in __instance.GetComponentsInParent<Renderer>())
                 {
                     mesh.gameObject.AddComponent<CreatureVision>();
                 }

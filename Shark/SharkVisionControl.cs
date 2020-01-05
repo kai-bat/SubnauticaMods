@@ -19,7 +19,15 @@ namespace Shark
                     return false;
                 }
 
-                if(vehicle.GetType() != typeof(Shark))
+                if(!vehicle.GetComponent<Shark>())
+                {
+                    return false;
+                }
+
+                Shark shark = vehicle.GetComponent<Shark>();
+                bool able = shark.GetPilotingMode() && shark.energyInterface.hasCharge;
+
+                if(!able)
                 {
                     return false;
                 }
@@ -41,6 +49,7 @@ namespace Shark
                 newCam.clearFlags = CameraClearFlags.Depth;
                 newCam.depth = 1;
                 newCam.cullingMask = 8388608;
+                newCam.nearClipPlane = 0.01f;
                 cam = newCam;
             }
         }

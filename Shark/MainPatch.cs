@@ -48,20 +48,46 @@ namespace Shark
             harm.PatchAll(Assembly.GetExecutingAssembly());
 
             Shark.laserTechType = TechTypeHandler.AddTechType("SharkLaserCannon", "5H-4RK Ranged Combat Module", "Equips the vessel with mid to long range combat capabilities");
+            CraftDataHandler.SetEquipmentType(Shark.laserTechType, (EquipmentType)sharkTech);
+            CraftDataHandler.SetQuickSlotType(Shark.laserTechType, QuickSlotType.Passive);
+            PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkLaserCannon", "WorldEntities/Upgrades/SharkLaserCannon", Shark.laserTechType));
+
             Shark.ramTechType = TechTypeHandler.AddTechType("SharkBatteringRam", "5H-4RK Momentum-Based Combat Module", "Equips the vessel with hardlight blades to lacerate prey at high velocity");
+            CraftDataHandler.SetEquipmentType(Shark.ramTechType, (EquipmentType)sharkTech);
+            CraftDataHandler.SetQuickSlotType(Shark.ramTechType, QuickSlotType.Passive);
+            PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkBatteringRam", "WorldEntities/Upgrades/SharkBatteringRam", Shark.ramTechType));
+
             Shark.visionTechType = TechTypeHandler.AddTechType("SharkVision", "5H-4RK Precursor Vision Module", "Allows the vessel's pilot to visualise potential targets through obstructive media");
+            CraftDataHandler.SetEquipmentType(Shark.visionTechType, (EquipmentType)sharkTech);
+            CraftDataHandler.SetQuickSlotType(Shark.visionTechType, QuickSlotType.Selectable);
+            SpriteHandler.RegisterSprite(Shark.visionTechType, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/SharkVision_Icon.png");
+            PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkVision", "WorldEntities/Upgrades/SharkVision", Shark.visionTechType));
+
+            Shark.shieldTechType = TechTypeHandler.AddTechType("SharkShield", "5H-4RK External Defense Module", "Projects a light energy shield around the submersible, which must recharge once depleted");
+            CraftDataHandler.SetEquipmentType(Shark.shieldTechType, (EquipmentType)sharkTech);
+            CraftDataHandler.SetQuickSlotType(Shark.shieldTechType, QuickSlotType.Toggleable);
+            PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkShield", "WorldEntities/Upgrades/SharkShield", Shark.shieldTechType));
+
+            Shark.blinkTechType = TechTypeHandler.AddTechType("SharkBlink", "5H-4RK Warp Evasion Module", "Uses warper technology to rapidly move the submersible in any direction");
+            CraftDataHandler.SetEquipmentType(Shark.blinkTechType, (EquipmentType)sharkTech);
+            CraftDataHandler.SetQuickSlotType(Shark.blinkTechType, QuickSlotType.Selectable);
+            SpriteHandler.RegisterSprite(Shark.blinkTechType, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/SharkBlink_Icon.png");
+            PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkBlink", "WorldEntities/Upgrades/SharkBlink", Shark.blinkTechType));
+
+            Shark.internalBattery = TechTypeHandler.AddTechType("SharkBattery_Internal", "battery baybee", "you shouldn't be holding this item");
+            PrefabHandler.RegisterPrefab(new SharkBatteryPrefab("SharkBattery_Internal", "WorldEntities/Batteris/SharkBattery", Shark.internalBattery));
+
+            Shark.depletedIonCube = TechTypeHandler.AddTechType("IonCubeEmpty", "Depleted Ion Cube", "This Ion Cube has gone dark, depleted of energy");
+            SpriteHandler.RegisterSprite(Shark.depletedIonCube, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/DepletedCrystal_Icon.png");
+            PrefabHandler.RegisterPrefab(new DepletedCrystalPrefab("IonCubeEmpty", "WorldEntites/Doodads/EmptyIonCube", Shark.depletedIonCube));
 
             seeThroughMat = bundle.LoadAsset<Material>("Assets/Materials/wallvision.mat");
-        }
 
-        public static T AddOrGet<T>(this GameObject obj) where T : Component
-        {
-            T comp = obj.GetComponent<T>();
-            if(!comp)
+
+            for(int i = 0; i < 32; i++)
             {
-                comp = obj.AddComponent<T>();
+                Console.WriteLine(LayerMask.LayerToName(i));
             }
-            return comp;
         }
     }
 }
