@@ -22,17 +22,39 @@ namespace Shark
 
             Exosuit exo = CraftData.GetPrefabForTechType(TechType.Exosuit).GetComponent<Exosuit>();
             SeaMoth sea = CraftData.GetPrefabForTechType(TechType.Seamoth).GetComponent<SeaMoth>();
+            GameObject ionCrystal = CraftData.GetPrefabForTechType(TechType.PrecursorIonCrystal);
 
             GameObject shark = MainPatch.bundle.LoadAsset<GameObject>("SharkPrefab.prefab");
-            
-            foreach(Renderer rend in shark.GetComponentsInChildren<MeshRenderer>())
+
+            List<string> exclusions = new List<string>
             {
-                if (!rend.name.Contains("Window") && !rend.name.Contains("Sonar") && !rend.name.Contains("EnergyBlade"))
+                "Window",
+                "Sonar",
+                "EnergyBlade",
+                "VolumeLight"
+            };
+
+            Material newMat = new Material(ionCrystal.GetComponentInChildren<MeshRenderer>().material);
+            Vector4 fakesss = newMat.GetVector("_FakeSSSparams");
+            fakesss.y = 0f;
+            newMat.SetVector("_FakeSSSparams", fakesss);
+
+            foreach (Renderer rend in shark.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (exclusions.IndexOf(rend.name) == -1)
                 {
                     rend.material.shader = Shader.Find("MarmosetUBER");
                 }
+
+                if (rend.name == "EnergyBlade")
+                {
+                    rend.material = newMat;
+                }
             }
-            
+
+            var bladecontrol = shark.EnsureComponent<SharkBladeControl>();
+            bladecontrol.bladeMat = newMat;
+
             Console.WriteLine("Setting up component");
 
             Shark sharkComp = shark.EnsureComponent<Shark>();
@@ -42,6 +64,7 @@ namespace Shark
             sharkComp.controlSheme = Vehicle.ControlSheme.Submersible;
             sharkComp.mainAnimator = shark.EnsureComponent<Animator>();
             sharkComp.mainAnimator.runtimeAnimatorController = sea.mainAnimator.runtimeAnimatorController;
+            sharkComp.oxygenEnergyCost = 0f;
 
             while(shark.GetComponent<FMOD_CustomLoopingEmitter>())
             {
@@ -58,7 +81,7 @@ namespace Shark
             sharkComp.normalMove = shark.AddComponent<FMOD_CustomLoopingEmitter>();
             sharkComp.normalMove.followParent = true;
             sharkComp.normalMove.asset = sea.engineSound.engineRpmSFX.asset;
-            sharkComp.chargeFinished = exo.jumpSound;
+            sharkComp.chargeFinished = sea.seamothElectricalDefensePrefab.GetComponent<ElectricalDefense>().defenseSound;
             sharkComp.splash = sea.splashSound;
 
             sharkComp.welcomeNotification = shark.EnsureComponent<VoiceNotification>();
@@ -121,10 +144,27 @@ namespace Shark
             vfx.surfaceSplashFX = seamothvfx.surfaceSplashFX;
             vfx.surfaceSplashVelocity = seamothvfx.surfaceSplashVelocity;
 
+            bladecontrol.alpha = vfx.alphaDetailTexture;
+
             var fx = shark.EnsureComponent<SharkFXControl>();
             fx.shark = sharkComp;
             fx.zoomFX = shark.transform.Find("Scaler/FX/Boost").GetComponent<ParticleSystem>();
             fx.moveTrail = shark.transform.Find("Scaler/FX/Trail").GetComponent<TrailRenderer>();
+
+            /*
+            VFXVolumetricLight lightfx = shark.EnsureComponent<VFXVolumetricLight>();
+            lightfx.volumGO = shark.transform.Find("Scaler/SharkMesh/VolumeLight").gameObject;
+            var seamothlight = sea.volumeticLights[0];
+            lightfx.coneMat = new Material(seamothlight.coneMat);
+            lightfx.sphereMat = new Material(seamothlight.sphereMat);
+            lightfx.volumGO.GetComponent<MeshRenderer>().material = lightfx.coneMat;
+            lightfx.intensity = seamothlight.intensity;
+            lightfx.startFallof = seamothlight.startFallof;
+            lightfx.startOffset = seamothlight.startOffset;
+            lightfx.softEdges = seamothlight.softEdges;
+            lightfx.nearClip = seamothlight.nearClip;
+            lightfx.lightSource = shark.transform.Find("Scaler/Headlights/Spot Light").GetComponent<Light>();
+            */
 
             for(int i = 0; i < shark.transform.childCount; i++)
             {
@@ -176,7 +216,7 @@ namespace Shark
 
             Transform energyParent = shark.transform.Find("Scaler/BatteryPower").transform;
 
-            GameObject ionCrystal = CraftData.GetPrefabForTechType(TechType.PrecursorIonCrystal);
+            
 
             sharkComp.energyInterface = shark.EnsureComponent<EnergyInterface>();
 
@@ -260,7 +300,9 @@ namespace Shark
             
             shark.EnsureComponent<SharkUIControl>().shark = sharkComp;
 
-            shark.EnsureComponent<DealDamageOnImpact>().mirroredSelfDamage = false;
+            sharkComp.impactdmg = shark.EnsureComponent<DealDamageOnImpact>();
+            sharkComp.impactdmg.damageTerrain = true;
+            sharkComp.impactdmg.mirroredSelfDamage = true;
 
             Console.WriteLine("Beacon");
 

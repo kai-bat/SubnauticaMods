@@ -15,8 +15,8 @@ namespace Shark
 
         public RectTransform powerScale;
         public RectTransform chargeScale;
+        public RectTransform heatScale;
         public RectTransform duraScale;
-        public Image chargeOutline;
 
         public void Awake()
         {
@@ -24,14 +24,14 @@ namespace Shark
 
             powerScale = canvas.transform.Find("Panel/Power/Meter/Scale") as RectTransform;
             chargeScale = canvas.transform.Find("Panel/Charge/Meter/Scale") as RectTransform;
-            chargeOutline = canvas.transform.Find("Panel/Charge/Meter/Outline").GetComponent<Image>();
+            heatScale = canvas.transform.Find("Panel/Charge/Meter/HeatScale") as RectTransform;
             duraScale = canvas.transform.Find("Panel/Durability/Meter/Scale") as RectTransform;
         }
 
         public void Update()
         {
             chargeScale.localScale = new Vector3(shark.boostCharge, 1f, 1f);
-            chargeOutline.enabled = shark.isBoosting;
+            heatScale.localScale = new Vector3(shark.boostHeat, 1f, 1f);
             shark.energyInterface.GetValues(out float charge, out float capacity);
             if (GameModeUtils.RequiresPower())
             {

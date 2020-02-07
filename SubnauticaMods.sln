@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2024
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlienRifle", "AlienRifle\AlienRifle.csproj", "{65DE98E5-681A-4317-8E49-40BB9B905603}"
 EndProject
@@ -15,6 +15,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewMainMenu", "NewMainMenu\NewMainMenu.csproj", "{EC82D5B6-FC34-43C5-AD74-C2AB69CAF22F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shark", "Shark\Shark.csproj", "{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoAurora", "NoAurora\NoAurora.csproj", "{19D86E44-F54D-4155-835E-4D16378C39B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F37EFF37-F3F7-4D67-87AB-F1CD50E1AF2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19D86E44-F54D-4155-835E-4D16378C39B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19D86E44-F54D-4155-835E-4D16378C39B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19D86E44-F54D-4155-835E-4D16378C39B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19D86E44-F54D-4155-835E-4D16378C39B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -33,7 +33,7 @@ namespace Shark
             ExitVehicle();
         }
 
-        void Update ()
+        void Update()
         {
             bool isAboveWater = transform.position.y > Ocean.main.GetOceanLevel() || shark.precursorOutOfWater;
             if (isAboveWater != shark.wasAboveWater)
@@ -47,12 +47,14 @@ namespace Shark
                 transform.parent = null;
             }
 
-            cam.shouldLook = shark.GetPilotingMode() && Time.timeScale > 0f;
+            bool freecamEnabled = MainCameraControl.main.GetComponent<FreecamController>().GetActive();
+
+            cam.shouldLook = shark.GetPilotingMode() && Time.timeScale > 0f && !freecamEnabled;
 
             // Process Controls
-            if(shark.GetPilotingMode())
+            if (shark.GetPilotingMode() && !DevConsole.instance.selected && !freecamEnabled)
             {
-                if (shark.energyInterface.hasCharge)
+                if (shark.energyInterface.hasCharge || !GameModeUtils.RequiresPower())
                 {
                     if (GameInput.GetButtonDown(GameInput.Button.AltTool))
                     {
@@ -69,19 +71,39 @@ namespace Shark
                         ExitVehicle();
                     }
 
+                    if(shark.boostHeat == 1f)
+                    {
+                        shark.boostCharge = 0f;
+                        shark.overheated = true;
+                    }
+
+                    if(shark.boostHeat == 0f)
+                    {
+                        shark.overheated = false;
+                    }
+
                     float preBoost = shark.boostCharge;
-                    shark.boostCharge += (GameInput.GetButtonHeld(GameInput.Button.Sprint) ?
-                        2f : -2f) * Time.deltaTime;
+                    if (GameInput.GetButtonHeld(GameInput.Button.Sprint) && !shark.overheated)
+                    {
+                        shark.boostCharge += Time.deltaTime * 2f;
+                    }
+                    else
+                    {
+                        shark.boostCharge = 0f;
+                    }
 
                     shark.boostCharge = Mathf.Clamp01(shark.boostCharge);
                     float postBoost = shark.boostCharge;
 
                     shark.isBoosting = shark.boostCharge == 1f;
-
+                    
                     if(isAboveWater)
                     {
                         shark.isBoosting = false;
                     }
+
+                    shark.boostHeat += shark.isBoosting ? Time.deltaTime / 5f : -Time.deltaTime / 5f;
+                    shark.boostHeat = Mathf.Clamp01(shark.boostHeat);
 
                     shark.boostChargeDelta = postBoost - preBoost;
 
@@ -97,7 +119,7 @@ namespace Shark
 
         void FixedUpdate()
         {
-            if (shark.GetPilotingMode() && shark.energyInterface.hasCharge)
+            if (shark.GetPilotingMode() && shark.energyInterface.hasCharge && !DevConsole.instance.selected && !MainCameraControl.main.GetComponent<FreecamController>().GetActive())
             {
                 bool isInWater = transform.position.y < Ocean.main.GetOceanLevel() && !shark.precursorOutOfWater;
                 if (isInWater)

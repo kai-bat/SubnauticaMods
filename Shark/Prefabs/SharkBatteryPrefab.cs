@@ -18,7 +18,7 @@ namespace Shark
             GameObject obj = new GameObject("SharkBattery");
 
             Battery batt = obj.EnsureComponent<Battery>();
-            batt._capacity = 10f;
+            batt._capacity = 1000f;
 
             obj.EnsureComponent<Pickupable>();
             obj.EnsureComponent<TechTag>().type = TechType;

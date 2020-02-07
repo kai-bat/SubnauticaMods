@@ -21,7 +21,7 @@ namespace Shark
             {
                 if (shark.boostCharge == 1 && shark.boostChargeDelta > 0f)
                 {
-                    FMODUWE.PlayOneShot(shark.chargeFinished, transform.position);
+                    FMODUWE.PlayOneShot(shark.chargeFinished, transform.position, 0.5f);
                 }
                 else if (shark.boostChargeDelta > 0f)
                 {

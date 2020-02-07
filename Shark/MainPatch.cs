@@ -19,13 +19,11 @@ namespace Shark
 
         public static void Patch()
         {
-            Console.WriteLine($"Layer ID 21 Name: {LayerMask.LayerToName(21)}");
-
             bundle = AssetBundle.LoadFromFile(Path.Combine(Environment.CurrentDirectory, "QMods/5H-4RK Submersible/shark"));
 
             sharkTech = TechTypeHandler.AddTechType("Shark", "5H-4RK Submersible", "An ancient alien vessel designed to mimic local fauna");
 
-            SharkPrefab prefab = new SharkPrefab("Shark", "Assets/SharkSubmersible.prefab", sharkTech);
+            SharkPrefab prefab = new SharkPrefab("Shark", "WorldEntities/Vehicles/Shark", sharkTech);
             PrefabHandler.RegisterPrefab(prefab);
 
             TechData data = new TechData();
@@ -81,13 +79,13 @@ namespace Shark
             SpriteHandler.RegisterSprite(Shark.depletedIonCube, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/DepletedCrystal_Icon.png");
             PrefabHandler.RegisterPrefab(new DepletedCrystalPrefab("IonCubeEmpty", "WorldEntites/Doodads/EmptyIonCube", Shark.depletedIonCube));
 
-            seeThroughMat = bundle.LoadAsset<Material>("Assets/Materials/wallvision.mat");
+            Shark.sharkEngine = TechTypeHandler.AddTechType("SharkEngine", "5H-4RK Engine", "This converter is specially designed to convert energy from Ion Cubes directly into underwater thrust");
+            Shark.sharkComputer = TechTypeHandler.AddTechType("SharkComputer", "5H-4RK Internal Computer Systems", "This alien processor seems to be built to " +
+                "manage several submersible-related subroutines");
+            Shark.sharkHull = TechTypeHandler.AddTechType("SharkHull", "5H-4RK Hull Plating", "Alien metal that is designed to be very slightly flexible and " +
+                "lightweight, to allow for maneuverability while maintaining integrity under extreme pressure");
 
-
-            for(int i = 0; i < 32; i++)
-            {
-                Console.WriteLine(LayerMask.LayerToName(i));
-            }
+            seeThroughMat = bundle.LoadAsset<Material>("Assets/Materials/Shark/wallvision.mat");
         }
     }
 }

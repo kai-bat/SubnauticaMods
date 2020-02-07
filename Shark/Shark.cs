@@ -17,11 +17,13 @@ namespace Shark
         }
 
         public bool isBoosting = false;
+        public bool overheated = false;
         public float boostCharge = 0f;
         public float boostChargeDelta;
-
+        public float boostHeat = 0f;
 
         public ToggleLights lights;
+        public DealDamageOnImpact impactdmg;
         public SharkFireControl weapons;
         public SharkVisionControl vision;
         public SharkBlinkControl blink;
@@ -43,6 +45,10 @@ namespace Shark
 
         public static TechType internalBattery;
         public static TechType depletedIonCube;
+
+        public static TechType sharkEngine;
+        public static TechType sharkComputer;
+        public static TechType sharkHull;
 
         public GameObject clipTest;
 
@@ -66,6 +72,8 @@ namespace Shark
             {
                 SharkVisionControl._enabled = false;
             }
+
+            impactdmg.mirroredSelfDamage = modules.GetCount(ramTechType) == 0;
         }
 
         public override void OnUpgradeModuleToggle(int slotID, bool active)
@@ -77,6 +85,7 @@ namespace Shark
             if (techType == visionTechType)
             {
                 SharkVisionControl._enabled = !SharkVisionControl._enabled;
+                UwePostProcessingManager.ToggleBloom(false);
             }
             else if(techType == blinkTechType)
             {
@@ -113,8 +122,6 @@ namespace Shark
                 }
                 lastPilotingState = pilotingMode;
             }
-
-            docked = false;
 
             window.SetActive(SharkVisionControl.active);
         }
