@@ -12,12 +12,19 @@ namespace Shark
 {
     public class SharkPrefab : ModPrefab
     {
+        public static GameObject sharkPrefabCache;
+
         public SharkPrefab(string classId, string prefabFileName, TechType techType = TechType.None) : base(classId, prefabFileName, techType)
         {
         }
 
         public override GameObject GetGameObject()
         {
+            if(sharkPrefabCache)
+            {
+                return sharkPrefabCache;
+            }
+
             Console.WriteLine("Beginning shark load");
 
             Exosuit exo = CraftData.GetPrefabForTechType(TechType.Exosuit).GetComponent<Exosuit>();
@@ -31,7 +38,8 @@ namespace Shark
                 "Window",
                 "Sonar",
                 "EnergyBlade",
-                "VolumeLight"
+                "VolumeLight",
+                "Shield"
             };
 
             Material newMat = new Material(ionCrystal.GetComponentInChildren<MeshRenderer>().material);
@@ -49,11 +57,9 @@ namespace Shark
                 if (rend.name == "EnergyBlade")
                 {
                     rend.material = newMat;
+                    rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 }
             }
-
-            var bladecontrol = shark.EnsureComponent<SharkBladeControl>();
-            bladecontrol.bladeMat = newMat;
 
             Console.WriteLine("Setting up component");
 
@@ -66,7 +72,9 @@ namespace Shark
             sharkComp.mainAnimator.runtimeAnimatorController = sea.mainAnimator.runtimeAnimatorController;
             sharkComp.oxygenEnergyCost = 0f;
 
-            while(shark.GetComponent<FMOD_CustomLoopingEmitter>())
+            sharkComp.bladeControl = shark.EnsureComponent<SharkBladeControl>();
+
+            while (shark.GetComponent<FMOD_CustomLoopingEmitter>())
             {
                 GameObject.Destroy(shark.GetComponent<FMOD_CustomLoopingEmitter>());
             }
@@ -103,7 +111,7 @@ namespace Shark
             Console.WriteLine("Adding health");
 
             LiveMixin mixin = shark.EnsureComponent<LiveMixin>();
-            LiveMixinData data = new LiveMixinData();
+            LiveMixinData data = ScriptableObject.CreateInstance<LiveMixinData>();
             mixin.health = 100f;
             data.maxHealth = 100f;
             data.destroyOnDeath = false;
@@ -144,12 +152,11 @@ namespace Shark
             vfx.surfaceSplashFX = seamothvfx.surfaceSplashFX;
             vfx.surfaceSplashVelocity = seamothvfx.surfaceSplashVelocity;
 
-            bladecontrol.alpha = vfx.alphaDetailTexture;
-
-            var fx = shark.EnsureComponent<SharkFXControl>();
+            var fx = sharkComp.fxControl = shark.EnsureComponent<SharkFXControl>();
             fx.shark = sharkComp;
             fx.zoomFX = shark.transform.Find("Scaler/FX/Boost").GetComponent<ParticleSystem>();
-            fx.moveTrail = shark.transform.Find("Scaler/FX/Trail").GetComponent<TrailRenderer>();
+            fx.drillFX = shark.transform.Find("Scaler/FX/DrillParticleParent/DrillParticle").GetComponent<ParticleSystem>();
+            fx.blinkFX = shark.transform.Find("Scaler/FX/BlinkParticles").GetComponent<ParticleSystem>();
 
             /*
             VFXVolumetricLight lightfx = shark.EnsureComponent<VFXVolumetricLight>();
@@ -204,6 +211,7 @@ namespace Shark
             lights.lightsParent = headLightParent.gameObject;
             lights.onSound = sea.toggleLights.lightsOnSound.asset;
             lights.offSound = sea.toggleLights.lightsOffSound.asset;
+            lights.energyPerSecond = 0f;
             sharkComp.lights = lights;
 
             Console.WriteLine("Adding smooth cam");
@@ -227,6 +235,7 @@ namespace Shark
             {
                 Shark.internalBattery
             };
+            energy.defaultBattery = Shark.internalBattery;
 
             EnergyMixin.BatteryModels model = new EnergyMixin.BatteryModels();
             model.model = energyParent.Find("PowerCube").gameObject;
@@ -255,12 +264,27 @@ namespace Shark
 
             sharkComp.modulesRoot = shark.transform.Find("Scaler/UpgradeModules").gameObject.EnsureComponent<ChildObjectIdentifier>();
 
-            sharkComp.weapons = shark.EnsureComponent<SharkFireControl>();
+            sharkComp.weapons = shark.EnsureComponent<SharkGunControl>();
             sharkComp.weapons.weaponFXParent = shark.transform.Find("Scaler/Weapons").gameObject;
             sharkComp.weapons.weaponModel = shark.transform.Find("Scaler/SharkMesh/Lasers").gameObject;
             sharkComp.weapons.upgradeInstalled = false;
 
             sharkComp.blink = shark.EnsureComponent<SharkBlinkControl>();
+            sharkComp.blink.blinkSound = CraftData.GetPrefabForTechType(TechType.PropulsionCannon).GetComponent<PropulsionCannon>().shootSound;
+            sharkComp.shield = shark.EnsureComponent<SharkShieldControl>();
+            sharkComp.shield.shieldRenderer = shark.transform.Find("Scaler/SharkMesh/Shield").gameObject;
+
+            sharkComp.drill = shark.EnsureComponent<SharkDrillControl>();
+            sharkComp.drill.upgradeModels = shark.transform.Find("Scaler/SharkMesh/DrillMeshes").gameObject;
+
+            StorageContainer drillStorage = sharkComp.drill.storageContainer = shark.transform.Find("Scaler/StorageContainerParent").gameObject.EnsureComponent<StorageContainer>();
+            drillStorage.storageRoot = sharkComp.drill.storageContainer.gameObject.EnsureComponent<ChildObjectIdentifier>();
+            drillStorage.width = 4;
+            drillStorage.height = 5;
+            drillStorage.storageLabel = "Drill Storage";
+            drillStorage.hoverText = "OpenStorage";
+            drillStorage.container = null;
+            drillStorage.CreateContainer();
 
             var upgradeconsole = sharkComp.modulesRoot.gameObject.EnsureComponent<VehicleUpgradeConsoleInput>();
             sharkComp.upgradesInput = upgradeconsole;
@@ -325,6 +349,8 @@ namespace Shark
             {
                 PingManager.sCachedPingTypeStrings.valueToString.Add(pingType, "SharkPing");
             }
+
+            sharkPrefabCache = shark;
 
             return shark;
         }

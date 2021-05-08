@@ -9,7 +9,8 @@ namespace Shark
     public class SharkFXControl : MonoBehaviour
     {
         public ParticleSystem zoomFX;
-        public TrailRenderer moveTrail;
+        public ParticleSystem drillFX;
+        public ParticleSystem blinkFX;
         public Shark shark;
 
         public void Update()
@@ -28,8 +29,6 @@ namespace Shark
                     zoomFX.Stop(false, ParticleSystemStopBehavior.StopEmitting);
                 }
             }
-
-            moveTrail.emitting = shark.GetPilotingMode();
         }
     }
 }

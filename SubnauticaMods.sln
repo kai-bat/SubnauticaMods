@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shark", "Shark\Shark.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoAurora", "NoAurora\NoAurora.csproj", "{19D86E44-F54D-4155-835E-4D16378C39B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrecursorFabricator", "PrecursorFabricator\PrecursorFabricator.csproj", "{8FC376E0-C618-4FBF-9CE8-78812C24E65A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Map3D", "Map3D\Map3D.csproj", "{B3890AD8-8052-42A7-B600-39366312FDAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +48,14 @@ Global
 		{19D86E44-F54D-4155-835E-4D16378C39B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19D86E44-F54D-4155-835E-4D16378C39B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19D86E44-F54D-4155-835E-4D16378C39B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FC376E0-C618-4FBF-9CE8-78812C24E65A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FC376E0-C618-4FBF-9CE8-78812C24E65A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FC376E0-C618-4FBF-9CE8-78812C24E65A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FC376E0-C618-4FBF-9CE8-78812C24E65A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3890AD8-8052-42A7-B600-39366312FDAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3890AD8-8052-42A7-B600-39366312FDAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3890AD8-8052-42A7-B600-39366312FDAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3890AD8-8052-42A7-B600-39366312FDAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

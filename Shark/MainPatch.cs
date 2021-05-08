@@ -8,30 +8,43 @@ using SMLHelper.V2.Crafting;
 using System.IO;
 using Harmony;
 using System.Reflection;
+using QModManager.API.ModLoading;
 
 namespace Shark
 {
+    [QModCore]
     public static class MainPatch
     {
         public static AssetBundle bundle;
         public static Material seeThroughMat;
         public static TechType sharkTech;
 
+        [QModPatch]
         public static void Patch()
         {
             bundle = AssetBundle.LoadFromFile(Path.Combine(Environment.CurrentDirectory, "QMods/5H-4RK Submersible/shark"));
 
             sharkTech = TechTypeHandler.AddTechType("Shark", "5H-4RK Submersible", "An ancient alien vessel designed to mimic local fauna");
+            SpriteHandler.RegisterSprite(sharkTech, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/Shark_Icon.png");
 
             SharkPrefab prefab = new SharkPrefab("Shark", "WorldEntities/Vehicles/Shark", sharkTech);
             PrefabHandler.RegisterPrefab(prefab);
+
+            TechType ingotTech;
+
+            if(!TechTypeHandler.TryGetModdedTechType("PrecursorIngot", out ingotTech)) {
+                throw new Exception("SHARK TRIED LOADING BUT PRECURSOR FABRICATOR NOT FOUND");
+            }
 
             TechData data = new TechData();
             data.craftAmount = 1;
             data.Ingredients = new List<Ingredient>()
             {
+                new Ingredient(TechType.AdvancedWiringKit, 1),
+                new Ingredient(TechType.Magnetite, 3),
+                new Ingredient(TechType.PrecursorKey_Purple, 1),
                 new Ingredient(TechType.PrecursorIonCrystal, 1),
-                new Ingredient(TechType.PlasteelIngot, 3) 
+                new Ingredient(ingotTech, 3)
             };
 
             CraftTreeHandler.AddCraftingNode(CraftTree.Type.Constructor, sharkTech, "Vehicles");
@@ -45,7 +58,7 @@ namespace Shark
             HarmonyInstance harm = HarmonyInstance.Create("Kylinator25.SharkSub");
             harm.PatchAll(Assembly.GetExecutingAssembly());
 
-            Shark.laserTechType = TechTypeHandler.AddTechType("SharkLaserCannon", "5H-4RK Ranged Combat Module", "Equips the vessel with mid to long range combat capabilities");
+            Shark.laserTechType = TechTypeHandler.AddTechType("SharkLaserCannon", "5H-4RK Ranged Combat Module", "Equips the vessel with mid to long range combat capabilities.");
             CraftDataHandler.SetEquipmentType(Shark.laserTechType, (EquipmentType)sharkTech);
             CraftDataHandler.SetQuickSlotType(Shark.laserTechType, QuickSlotType.Passive);
             PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkLaserCannon", "WorldEntities/Upgrades/SharkLaserCannon", Shark.laserTechType));
@@ -63,7 +76,7 @@ namespace Shark
 
             Shark.shieldTechType = TechTypeHandler.AddTechType("SharkShield", "5H-4RK External Defense Module", "Projects a light energy shield around the submersible, which must recharge once depleted");
             CraftDataHandler.SetEquipmentType(Shark.shieldTechType, (EquipmentType)sharkTech);
-            CraftDataHandler.SetQuickSlotType(Shark.shieldTechType, QuickSlotType.Toggleable);
+            CraftDataHandler.SetQuickSlotType(Shark.shieldTechType, QuickSlotType.Selectable);
             PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkShield", "WorldEntities/Upgrades/SharkShield", Shark.shieldTechType));
 
             Shark.blinkTechType = TechTypeHandler.AddTechType("SharkBlink", "5H-4RK Warp Evasion Module", "Uses warper technology to rapidly move the submersible in any direction");
@@ -72,12 +85,29 @@ namespace Shark
             SpriteHandler.RegisterSprite(Shark.blinkTechType, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/SharkBlink_Icon.png");
             PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkBlink", "WorldEntities/Upgrades/SharkBlink", Shark.blinkTechType));
 
+            Shark.drillTechType = TechTypeHandler.AddTechType("SharkDrill", "5H-4RK Resource Acquisition Module", "Uses a steady beam of focused light to collect resources");
+            CraftDataHandler.SetEquipmentType(Shark.drillTechType, (EquipmentType)sharkTech);
+            CraftDataHandler.SetQuickSlotType(Shark.drillTechType, QuickSlotType.Selectable);
+            SpriteHandler.RegisterSprite(Shark.drillTechType, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/SharkDrill_Icon.png");
+            PrefabHandler.RegisterPrefab(new SharkUpgradePrefab("SharkDrill", "WorldEntities/Upgrades/SharkDrill", Shark.drillTechType));
+
             Shark.internalBattery = TechTypeHandler.AddTechType("SharkBattery_Internal", "battery baybee", "you shouldn't be holding this item");
             PrefabHandler.RegisterPrefab(new SharkBatteryPrefab("SharkBattery_Internal", "WorldEntities/Batteris/SharkBattery", Shark.internalBattery));
 
             Shark.depletedIonCube = TechTypeHandler.AddTechType("IonCubeEmpty", "Depleted Ion Cube", "This Ion Cube has gone dark, depleted of energy");
             SpriteHandler.RegisterSprite(Shark.depletedIonCube, Environment.CurrentDirectory + "/QMods/5H-4RK Submersible/Assets/DepletedCrystal_Icon.png");
             PrefabHandler.RegisterPrefab(new DepletedCrystalPrefab("IonCubeEmpty", "WorldEntites/Doodads/EmptyIonCube", Shark.depletedIonCube));
+
+            Shark.ionFragment = TechTypeHandler.AddTechType("IonFragment", "Ion Cube Fragment", "A chunk of a depleted ion cube, suitable for advanced electronics fabrication");
+
+            TechData fragmentData = new TechData();
+            fragmentData.craftAmount = 3;
+            fragmentData.Ingredients = new List<Ingredient>()
+            {
+                new Ingredient(Shark.depletedIonCube, 1),
+            };
+
+            CraftDataHandler.SetTechData(Shark.ionFragment, fragmentData);
 
             Shark.sharkEngine = TechTypeHandler.AddTechType("SharkEngine", "5H-4RK Engine", "This converter is specially designed to convert energy from Ion Cubes directly into underwater thrust");
             Shark.sharkComputer = TechTypeHandler.AddTechType("SharkComputer", "5H-4RK Internal Computer Systems", "This alien processor seems to be built to " +

@@ -8,14 +8,25 @@ namespace Shark
 {
     public class SharkBlinkControl : MonoBehaviour
     {
+        public FMODAsset blinkSound;
+
         public void AttemptBlink(Shark shark)
         {
-            if(!shark.energyInterface.hasCharge)
+            if(!shark.energyInterface.hasCharge && GameModeUtils.RequiresPower())
             {
-
+                return;
             }
 
-            Vector3 targetPos = shark.transform.position + shark.useRigidbody.velocity.normalized * 25f;
+            Vector3 targetPos = Vector3.zero;
+
+            if (GameInput.GetMoveDirection().magnitude > 0f)
+            {
+                targetPos = shark.transform.position + shark.useRigidbody.velocity.normalized * 25f;
+            }
+            else
+            {
+                targetPos = shark.transform.position + shark.transform.forward * 25f;
+            }
 
             targetPos.y = Mathf.Clamp(targetPos.y, Ocean.main.GetOceanLevel() - 3000f, Ocean.main.GetOceanLevel());
 
@@ -23,7 +34,7 @@ namespace Shark
 
             foreach(RaycastHit hit in hits)
             {
-                if(hit.transform.gameObject == shark.GetComponent<SharkControl>().mainCollision)
+                if(hit.transform.GetComponentInParent<Shark>())
                 {
                     continue;
                 }
@@ -33,6 +44,10 @@ namespace Shark
             }
 
             shark.transform.position = targetPos;
+
+            shark.fxControl.blinkFX.Play(true);
+
+            Utils.PlayFMODAsset(blinkSound, transform);
         }
     }
 }

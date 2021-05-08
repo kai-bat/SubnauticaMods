@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Shark</RootNamespace>
     <AssemblyName>Shark</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,19 +32,26 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony-1.2.0.1">
       <HintPath>..\..\..\..\..\..\Program Files\Epic Games\Subnautica\Subnautica_Data\Managed\0Harmony-1.2.0.1.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass_publicized">
-      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp-firstpass_publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Non Steam Games\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Non Steam Games\Subnautica\Subnautica_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="SMLHelper">
-      <HintPath>..\..\..\..\..\..\Program Files\Epic Games\Subnautica\QMods\Modding Helper\SMLHelper.dll</HintPath>
+    <Reference Include="QModInstaller">
+      <HintPath>..\..\..\Non Steam Games\Subnautica\BepInEx\plugins\QModManager\QModInstaller.dll</HintPath>
+    </Reference>
+    <Reference Include="SMLHelper, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Non Steam Games\Subnautica\QMods\Modding Helper\SMLHelper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -85,11 +93,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patches\BloomSettingPatch.cs" />
-    <Compile Include="BulletControl.cs" />
+    <Compile Include="Controllers\SharkShieldControl.cs" />
+    <Compile Include="Patches\DrillableStartPatch.cs" />
+    <Compile Include="Controllers\BulletControl.cs" />
     <Compile Include="Patches\ConstructorInputPatch.cs" />
     <Compile Include="Patches\CreatureSpawnPatch.cs" />
-    <Compile Include="CreatureVision.cs" />
+    <Compile Include="Controllers\CreatureVision.cs" />
     <Compile Include="Patches\DockingBayPatch.cs" />
     <Compile Include="Patches\EquipmentUIPatch.cs" />
     <Compile Include="MainPatch.cs" />
@@ -97,19 +106,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shark.cs" />
     <Compile Include="Prefabs\SharkBatteryPrefab.cs" />
-    <Compile Include="SharkBladeControl.cs" />
-    <Compile Include="SharkBlinkControl.cs" />
-    <Compile Include="SharkControl.cs" />
-    <Compile Include="SharkEnergySlot.cs" />
-    <Compile Include="SharkFireControl.cs" />
+    <Compile Include="Controllers\SharkBladeControl.cs" />
+    <Compile Include="Controllers\SharkBlinkControl.cs" />
+    <Compile Include="Controllers\SharkControl.cs" />
+    <Compile Include="SharkDrillable.cs" />
+    <Compile Include="Controllers\SharkDrillControl.cs" />
+    <Compile Include="Controllers\SharkEnergySlot.cs" />
+    <Compile Include="Controllers\SharkGunControl.cs" />
     <Compile Include="Prefabs\SharkPrefab.cs" />
-    <Compile Include="SharkFXControl.cs" />
-    <Compile Include="SharkSound.cs" />
-    <Compile Include="SharkTestGUI.cs" />
-    <Compile Include="SharkCameraSmooth.cs" />
+    <Compile Include="Controllers\SharkFXControl.cs" />
+    <Compile Include="Controllers\SharkSound.cs" />
+    <Compile Include="Controllers\SharkTestGUI.cs" />
+    <Compile Include="Controllers\SharkCameraSmooth.cs" />
     <Compile Include="Prefabs\SharkUpgradePrefab.cs" />
-    <Compile Include="SharkUIControl.cs" />
-    <Compile Include="SharkVisionControl.cs" />
+    <Compile Include="Controllers\SharkUIControl.cs" />
+    <Compile Include="Controllers\SharkVisionControl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -37,9 +37,12 @@ namespace Shark
         }
 
         public static bool _enabled;
+        public static bool bloomSettingSave;
 
         public void Awake()
         {
+            bloomSettingSave = UwePostProcessingManager.bloomEnabled;
+
             if(!cam)
             {
                 Camera newCam = new GameObject("wallcam").AddComponent<Camera>();

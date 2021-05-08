@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Shark
 {
-    public class SharkFireControl : MonoBehaviour
+    public class SharkGunControl : MonoBehaviour
     {
         public bool currentSide = true;
         public bool upgradeInstalled;
@@ -17,12 +17,17 @@ namespace Shark
         public GameObject weaponFXParent;
         public GameObject weaponModel;
 
+        public FMODAsset shootSound;
+
         float nextShot = 0f;
 
         public void Awake()
         {
             leftSide = weaponFXParent.transform.Find("LeftBarrel").gameObject;
             rightSide = weaponFXParent.transform.Find("RightBarrel").gameObject;
+
+            RepulsionCannon cannon = CraftData.GetPrefabForTechType(TechType.RepulsionCannon).GetComponent<RepulsionCannon>();
+            shootSound = cannon.shootSound;
         }
 
         public void Update()
@@ -53,12 +58,16 @@ namespace Shark
 
             GameObject inst = Instantiate(prefab);
             inst.transform.parent = null;
-            inst.transform.position = side.transform.position;
+            inst.transform.position = side.transform.position + side.transform.forward;
             inst.transform.rotation = side.transform.rotation;
+
+            inst.GetComponent<Rigidbody>().velocity = inst.transform.forward.normalized * 150f;
 
             inst.SetActive(true);
 
-            inst.AddComponent<BulletControl>();
+            inst.AddComponent<BulletControl>().body = inst.GetComponent<Rigidbody>();
+
+            Utils.PlayFMODAsset(shootSound, side.transform.position);
             Destroy(inst, 5f);
         }
     }
