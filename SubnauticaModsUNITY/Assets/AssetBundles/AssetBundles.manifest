@@ -1,0 +1,13 @@
+ManifestFileVersion: 0
+CRC: 2470401186
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: shark
+      Dependencies: {}
+    Info_1:
+      Name: fabricatorassets
+      Dependencies: {}
+    Info_2:
+      Name: megalovania
+      Dependencies: {}
