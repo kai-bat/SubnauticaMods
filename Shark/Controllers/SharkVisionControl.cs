@@ -54,6 +54,16 @@ namespace Shark
                 newCam.cullingMask = 8388608;
                 newCam.nearClipPlane = 0.01f;
                 cam = newCam;
+                
+                var cams = FindObjectsOfType<Camera>();
+                foreach (var camera in cams)
+                {
+                    if (camera.name.Contains("UI"))
+                    {
+                        camera.depth = 0;
+                        break;
+                    }
+                }
             }
         }
 
