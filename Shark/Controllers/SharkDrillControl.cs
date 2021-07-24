@@ -69,7 +69,11 @@ namespace Shark
                 ParticleSystem.ShapeModule shape = shark.fxControl.drillFX.shape;
                 shape.scale = new Vector3(0.3f, 0.3f, distToTarget);
 
+                Vector3 targetVector = drillTarget.transform.position - shark.fxControl.drillFX.transform.parent.position;
+                targetVector.Normalize();
+
                 shark.fxControl.drillFX.transform.localPosition = new Vector3(0f, 0f, distToTarget / 2f);
+                shark.fxControl.drillFX.transform.parent.forward = targetVector;
             }
             else
             {
@@ -79,6 +83,7 @@ namespace Shark
                 shape.scale = new Vector3(0.3f, 0.3f, 20f);
 
                 shark.fxControl.drillFX.transform.localPosition = new Vector3(0f, 0f, 10f);
+                shark.fxControl.drillFX.transform.localEulerAngles = Vector3.zero;
             }
         }
 

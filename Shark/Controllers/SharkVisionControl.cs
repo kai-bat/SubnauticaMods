@@ -53,6 +53,7 @@ namespace Shark
                 newCam.depth = 1;
                 newCam.cullingMask = 8388608;
                 newCam.nearClipPlane = 0.01f;
+                newCam.depth = 3;
                 cam = newCam;
             }
         }

@@ -2264,6 +2264,42 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1005608283, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1005608285, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: ShapeModule.m_Scale.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1005608285, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 4000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1005608285, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1673425841, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1673425841, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1673425841, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1673425841, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1673425841, guid: 31d3df19fee5c204ba194d748c67e47c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5614612456287212356, guid: 31d3df19fee5c204ba194d748c67e47c,
         type: 3}
       propertyPath: m_Name
