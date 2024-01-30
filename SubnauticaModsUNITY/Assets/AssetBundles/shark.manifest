@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1474762767
+CRC: 2766662803
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d83c88d8147f572042e9c0d0b853b178
+    Hash: 1c77de6b27ea525d1616a65110250f04
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 0ae9d28aa7a55a99b824285f9bf799ef
+    Hash: b7126cc7bbe385cb86894b8b6aac5291
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -35,14 +35,6 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
-- Class: 114
-  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-- Class: 115
-  Script: {instanceID: 0}
 - Class: 134
   Script: {instanceID: 0}
 - Class: 135
@@ -51,17 +43,10 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 199
   Script: {instanceID: 0}
-- Class: 213
-  Script: {instanceID: 0}
-- Class: 222
-  Script: {instanceID: 0}
-- Class: 223
-  Script: {instanceID: 0}
-- Class: 224
-  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/IonBlade/IonBladeFull.prefab
-- Assets/SharkPrefab.prefab
+- Assets/Prefabs/SharkPrefab.prefab
 - Assets/Materials/Shark/wallvision.mat
-- Assets/ioncube.obj
+- Assets/SubnauticaAssets/ioncube.obj
 Dependencies: []

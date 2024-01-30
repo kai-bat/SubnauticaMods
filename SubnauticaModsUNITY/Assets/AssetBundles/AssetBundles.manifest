@@ -1,13 +1,16 @@
 ManifestFileVersion: 0
-CRC: 2470401186
+CRC: 4103248527
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: shark
       Dependencies: {}
     Info_1:
-      Name: fabricatorassets
+      Name: megalovania
       Dependencies: {}
     Info_2:
-      Name: megalovania
+      Name: fabricatorassets
+      Dependencies: {}
+    Info_3:
+      Name: alienrifle
       Dependencies: {}

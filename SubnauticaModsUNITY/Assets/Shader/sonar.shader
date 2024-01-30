@@ -145,7 +145,7 @@
 
                 // Add edge brightening, tinted by the colour from the wave.
                 colour *= (colour * (2.0f + edge * 30.0f) + edge * 5.0f);
-
+                
 
                 // Output our finished colour.
 				float mult = 1 - (depth * _Falloff);

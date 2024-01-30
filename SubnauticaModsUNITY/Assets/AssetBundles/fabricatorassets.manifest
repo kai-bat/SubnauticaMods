@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1325568563
+CRC: 3909207060
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2751f98ab0a497303a8e65499879296b
+    Hash: 1ffbe5ef7bb06919b6c43b8b9ba9c6da
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 4195250ded556bd75085679be88af0a2
+    Hash: c73213b6b4fd4fbd82a3f284e99f0011
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -41,6 +41,7 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/PrecursorFabricator.prefab
 - Assets/PrecursorIngot.prefab
