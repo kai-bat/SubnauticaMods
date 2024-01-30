@@ -1,0 +1,52 @@
+ManifestFileVersion: 0
+CRC: 2738699097
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 2f39d61abdb1be3184d513501b7adb1c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: d3ef10f87426230e9bb67cbed6425482
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 120
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/AlienRifle/scopereticle.mat
+- Assets/AlienRifle/AlienRifleIdle.anim
+- Assets/AlienRifle/ChargeBar.mat
+- Assets/AlienRifle/particle.mat
+- Assets/AlienRifle/AlienRifleEquip.anim
+- Assets/AlienRifle/scopereticle.png
+- Assets/AlienRifle/Alien Rifle.prefab
+- Assets/AlienRifle/AlienRifleShoot.anim
+- Assets/AlienRifle/BulletBeam.mat
+- Assets/AlienRifle/AlienRifleHolster.anim
+Dependencies: []
