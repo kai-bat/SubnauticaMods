@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Shark
 
         public override GameObject GetGameObject()
         {
-            if(sharkPrefabCache)
+            if (sharkPrefabCache)
             {
                 return sharkPrefabCache;
             }
@@ -42,22 +43,48 @@ namespace Shark
                 "Shield"
             };
 
-            Material newMat = new Material(ionCrystal.GetComponentInChildren<MeshRenderer>().material);
-            Vector4 fakesss = newMat.GetVector("_FakeSSSparams");
+            Material ionCube = new Material(ionCrystal.GetComponentInChildren<MeshRenderer>().material);
+            Vector4 fakesss = ionCube.GetVector("_FakeSSSparams");
             fakesss.y = 0f;
-            newMat.SetVector("_FakeSSSparams", fakesss);
+            ionCube.SetVector("_FakeSSSparams", fakesss);
+
+            GameObject barrier;
+            UWE.PrefabDatabase.TryGetPrefab("8b5e6a02-533c-44cb-9f34-d2773aa82dc4", out barrier);
+            GameObject barrierParticles = barrier.GetComponentInChildren<ParticleSystem>().gameObject;
+            Material barrierMat = barrier.GetComponentInChildren<MeshRenderer>().material;
 
             foreach (Renderer rend in shark.GetComponentsInChildren<MeshRenderer>())
             {
-                if (exclusions.IndexOf(rend.name) == -1)
+                switch(rend.name)
                 {
-                    rend.material.shader = Shader.Find("MarmosetUBER");
-                }
+                    case "Window":
+                        rend.material = new Material(barrierMat);
+                        rend.material.color = new Color(0, 1f, 0);
+                        GameObject particleInstance = GameObject.Instantiate(barrierParticles);
+                        particleInstance.transform.parent = rend.transform;
+                        particleInstance.transform.localPosition = Vector3.zero;
+                        particleInstance.transform.localEulerAngles = Vector3.zero;
+                        particleInstance.transform.localScale = Vector3.one;
+                        ParticleSystem.ShapeModule shape = particleInstance.GetComponent<ParticleSystem>().shape;
+                        shape.shapeType = ParticleSystemShapeType.Mesh;
+                        shape.mesh = rend.GetComponent<MeshFilter>().mesh;
+                        shape.meshShapeType = ParticleSystemMeshShapeType.Triangle;
+                        shape.enabled = true;
 
-                if (rend.name == "EnergyBlade")
-                {
-                    rend.material = newMat;
-                    rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        break;
+                    case "EnergyBlade":
+                        rend.material = ionCube;
+                        rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                        break;
+                    case "Sonar":
+                        break;
+                    case "VolumeLight":
+                        break;
+                    case "Shield":
+                        break;
+                    default:
+                        rend.material.shader = Shader.Find("MarmosetUBER");
+                        break;
                 }
             }
 
@@ -239,7 +266,7 @@ namespace Shark
 
             EnergyMixin.BatteryModels model = new EnergyMixin.BatteryModels();
             model.model = energyParent.Find("PowerCube").gameObject;
-            model.model.GetComponent<MeshFilter>().mesh = MainPatch.bundle.LoadAsset<GameObject>("ioncube.obj").GetComponentInChildren<MeshFilter>().mesh;
+            model.model.GetComponent<MeshFilter>().mesh = ionCrystal.GetComponentInChildren<MeshFilter>().mesh;
             MeshRenderer meshRend = model.model.GetComponent<MeshRenderer>();
             meshRend.material = new Material(ionCrystal.GetComponentInChildren<MeshRenderer>().material);
             model.model.transform.localScale = ionCrystal.GetComponentInChildren<MeshFilter>().transform.lossyScale;
@@ -351,7 +378,6 @@ namespace Shark
             }
 
             sharkPrefabCache = shark;
-
             return shark;
         }
     }

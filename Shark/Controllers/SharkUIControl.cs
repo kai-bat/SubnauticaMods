@@ -20,6 +20,7 @@ namespace Shark
 
         public void Awake()
         {
+            return;
             canvas = transform.Find("Scaler/Canvas").GetComponent<Canvas>();
 
             powerScale = canvas.transform.Find("Panel/Power/Meter/Scale") as RectTransform;
@@ -30,6 +31,7 @@ namespace Shark
 
         public void Update()
         {
+            return;
             chargeScale.localScale = new Vector3(shark.boostCharge, 1f, 1f);
             heatScale.localScale = new Vector3(shark.boostHeat, 1f, 1f);
             shark.energyInterface.GetValues(out float charge, out float capacity);
