@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1047843436
+CRC: 2181318890
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 47532e9ccca176b82334aa9daf792b3a
+    Hash: d6c9b1e55fa8ead9fc0927109deff5f3
   TypeTreeHash:
     serializedVersion: 2
     Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
@@ -13,5 +13,5 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/Audio/MEGALOVANIA.mp3
+- Assets/Other/Audio/MEGALOVANIA.mp3
 Dependencies: []

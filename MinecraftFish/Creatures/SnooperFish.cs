@@ -57,7 +57,7 @@ namespace MinecraftFish.Creatures
             mainGO.EnsureComponent<TechTag>().type = Info.TechType;
 
             mainGO.EnsureComponent<SkyApplier>().renderers = renderers;
-            mainGO.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Near;
+            mainGO.EnsureComponent<LargeWorldEntity>().cellLevel = LargeWorldEntity.CellLevel.Batch;
             LiveMixin live = mainGO.EnsureComponent<LiveMixin>();
 
             var peeperTask = CraftData.GetPrefabForTechTypeAsync(TechType.Peeper);

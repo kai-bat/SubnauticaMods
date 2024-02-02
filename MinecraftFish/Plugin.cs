@@ -30,7 +30,7 @@ namespace MinecraftFish
 
             modFolder = Assembly.Location.Replace("MinecraftFish.dll", "");
 
-            bundle = AssetBundle.LoadFromFile(modFolder+"fishassets");
+            bundle = AssetBundle.LoadFromFile(modFolder+"minecraftfish");
             main = this;
 
             Shader shader = Shader.Find("MarmosetUBER");
@@ -55,7 +55,7 @@ namespace MinecraftFish
         {
             StartCoroutine(CodFish.Register());
             StartCoroutine(FlopperFish.Register());
-            StartCoroutine(SnooperFish.Register());
+            //StartCoroutine(SnooperFish.Register());
             initializedFish = true;
         }
     }

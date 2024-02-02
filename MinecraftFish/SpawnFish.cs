@@ -15,7 +15,7 @@ namespace MinecraftFish
     [HarmonyPatch(typeof(Creature), nameof(Creature.Start))]
     public static class SpawnFish
     {
-        public static float spawnChance = 0.1f;
+        public static float spawnChance = 0.3f;
 
         public static List<TechType> fishes = new List<TechType>();
 
