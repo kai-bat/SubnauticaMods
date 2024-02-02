@@ -1,0 +1,10 @@
+newmtl TropicalBig
+map_Kd C:/Users/kmcg0/Documents/GitHub/SubnauticaMods/SubnauticaModsUNITY/Assets/MCFish/fishtextures/tropical_b.png
+Kd 1 0.7924544 0
+d 1
+
+newmtl TropicalFlopper
+map_Kd C:/Users/kmcg0/Documents/GitHub/SubnauticaMods/SubnauticaModsUNITY/Assets/MCFish/fishtextures/tropical_b_pattern_1.png
+Kd 1 1 1
+d 1
+

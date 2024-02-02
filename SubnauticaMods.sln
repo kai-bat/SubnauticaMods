@@ -22,11 +22,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Map3D", "Map3D\Map3D.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlienRifle3", "AlienRifle3\AlienRifle3.csproj", "{9E0F42F5-E7A5-458C-A094-CC7036301FDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomLoadScreen", "CustomLoadScreen\CustomLoadScreen.csproj", "{CFC5B2E7-E281-4931-81B9-127A0855C6AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomLoadScreen", "CustomLoadScreen\CustomLoadScreen.csproj", "{CFC5B2E7-E281-4931-81B9-127A0855C6AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomLoadScreenOLD", "CustomLoadScreenOLD\CustomLoadScreenOLD.csproj", "{E03EAE68-89B9-44A9-8394-6A0570286DD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinecraftFish", "MinecraftFish\MinecraftFish.csproj", "{79E9245E-D45B-4FD3-8470-25152AFFC40A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinecraftFish", "MinecraftFish\MinecraftFish.csproj", "{6E613CAB-971B-4613-A327-ADC038774D7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,10 +70,10 @@ Global
 		{E03EAE68-89B9-44A9-8394-6A0570286DD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E03EAE68-89B9-44A9-8394-6A0570286DD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E03EAE68-89B9-44A9-8394-6A0570286DD6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{79E9245E-D45B-4FD3-8470-25152AFFC40A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{79E9245E-D45B-4FD3-8470-25152AFFC40A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{79E9245E-D45B-4FD3-8470-25152AFFC40A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{79E9245E-D45B-4FD3-8470-25152AFFC40A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E613CAB-971B-4613-A327-ADC038774D7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E613CAB-971B-4613-A327-ADC038774D7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E613CAB-971B-4613-A327-ADC038774D7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E613CAB-971B-4613-A327-ADC038774D7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

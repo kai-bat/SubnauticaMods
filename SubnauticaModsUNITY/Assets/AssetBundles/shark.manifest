@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1609612198
+CRC: 1955824017
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c77ee2da0746fa9b064a54f91192f041
+    Hash: 20939f90d4c2b938e856f19574609d4c
   TypeTreeHash:
     serializedVersion: 2
     Hash: b7126cc7bbe385cb86894b8b6aac5291
@@ -48,5 +48,4 @@ Assets:
 - Assets/IonBlade/IonBladeFull.prefab
 - Assets/SharkSub/SharkPrefab.prefab
 - Assets/SharkSub/Materials/wallvision.mat
-- Assets/SubnauticaAssets/ioncube.obj
 Dependencies: []

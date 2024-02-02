@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 47531156
+CRC: 4167875798
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e45b9723eb06ac3545c86f0f2c141d1a
+    Hash: 44ccb5c57133e02d88939498d992eaba
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c86e1f437894240eecf4ee31a4219590
+    Hash: f1f94f6e6cea8c763526aedff2ee3a2b
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -27,8 +27,6 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 54
   Script: {instanceID: 0}
-- Class: 64
-  Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
 - Class: 74
@@ -39,7 +37,21 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
+- Assets/MCFish/fishmats/BigVariants/TropicalClayfish.mat
+- Assets/MCFish/fishmats/BigVariants/TropicalBetty.mat
+- Assets/MCFish/fishmats/SmallVariants/TropicalSpotty.mat
+- Assets/MCFish/fishmats/BigVariants/TropicalGlitter.mat
+- Assets/MCFish/fishmats/SmallVariants/TropicalDasher.mat
+- Assets/MCFish/fishmats/SmallVariants/TropicalKob.mat
+- Assets/MCFish/fishmats/BigVariants/TropicalStripey.mat
+- Assets/MCFish/Tropical/TropicalFishPrefab.prefab
+- Assets/MCFish/fishmats/SmallVariants/TropicalSnooper.mat
+- Assets/MCFish/fishmats/BigVariants/TropicalBlockfish.mat
+- Assets/MCFish/fishmats/SmallVariants/TropicalSunstreak.mat
+- Assets/MCFish/fishmats/BigVariants/TropicalFlopper.mat
+- Assets/MCFish/fishmats/TropicalBig.mat
+- Assets/MCFish/fishmats/TropicalSmall.mat
 - Assets/MCFish/Cod/CodPrefab.prefab
+- Assets/MCFish/fishmats/SmallVariants/TropicalBrinely.mat
 - Assets/MCFish/Cod/Cod.controller
-- Assets/MCFish/TropicalBig/TropicalBigPrefab.prefab
 Dependencies: []

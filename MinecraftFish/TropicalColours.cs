@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using JetBrains.Annotations;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MinecraftFish
 {
@@ -25,33 +27,97 @@ namespace MinecraftFish
             new Color(0.3254901f, 0.1882353f, 0.0941176f),//brown
             new Color(0.2352941f, 0.3019608f, 0.1137255f),//green
             new Color(0.4784313f, 0.1019608f, 0.0941176f),//red
-            new Color(0.02352941f, 0.02352941f, 0.02352941f)//black
+            //new Color(0.02352941f, 0.02352941f, 0.02352941f)//black
         };
 
-        public static List<Material> materials = new List<Material>();
+        public static string[] colorNames = new string[]
+        {
+            "White",
+            "Orange",
+            "Magenta",
+            "Light Blue",
+            "Yellow",
+            "Lime",
+            "Pink",
+            "Gray",
+            "Light Gray",
+            "Cyan",
+            "Purple",
+            "Blue",
+            "Brown",
+            "Green",
+            "Red",
+            "Black"
+        };
 
-        public static Material eye;
+        public static string[] smallNames = new string[]
+        {
+            "Kob",
+            "Sunstreak",
+            "Snooper",
+            "Dasher",
+            "Brinely",
+            "Spotty"
+        };
+
+        public static string[] bigNames = new string[]
+        {
+            "Flopper",
+            "Stripey",
+            "Glitter",
+            "Blockfish",
+            "Betty",
+            "Clayfish"
+        };
+
+        public static Material[] smallBaseMaterials = new Material[15];
+        public static Material[] bigBaseMaterials = new Material[15];
+
+        public static Material[,] smallDetailMaterials = new Material[6,15];
+        public static Material[,] bigDetailMaterials = new Material[6,15];
+
+        public Renderer[] renderers;
 
         public void Awake()
         {
-            Material main = materials[Random.Range(0, materials.Count)];
-            Material detail = materials[Random.Range(0, materials.Count)];
+            bool size = Random.Range(0, 2) == 1;
+            int baseIndex = Random.Range(0, colors.Length);
+            string baseColorName = colorNames[baseIndex];
 
-            foreach (Renderer renderer in GetComponentsInChildren<Renderer>())
+            int detailIndex = baseIndex;
+            while(detailIndex == baseIndex)
             {
-                string name = renderer.name.ToLower();
+                detailIndex = Random.Range(0, colors.Length);
+            }
 
-                if (name.Contains("main"))
+            int pattern = Random.Range(0, 6);
+
+            gameObject.name += baseColorName + colorNames[detailIndex] + (size ? bigNames[pattern] : smallNames[pattern]);
+
+            //string patternName;
+            Material baseMat = size ? bigBaseMaterials[baseIndex] : smallBaseMaterials[baseIndex];
+            Material detailMat = size ? bigDetailMaterials[pattern, detailIndex] : smallDetailMaterials[pattern, detailIndex];
+
+            BoxCollider collider = GetComponent<BoxCollider>();
+            collider.center = size ? Vector3.zero : new Vector3(0f, 0.05f, 0f);
+            collider.size = size ? new Vector3(0.2f, 0.6f, 0.6f) : new Vector3(0.2f, 0.3f, 0.6f);
+
+            foreach(Renderer renderer in renderers)
+            {
+                string rendName = renderer.name.ToLower();
+                if(rendName.Contains(size ? "small" : "big"))
                 {
-                    renderer.material = main;
+                    Destroy(renderer.gameObject);
+                    continue;
                 }
-                else if (name.Contains("detail"))
+
+                if(rendName.Contains("base"))
                 {
-                    renderer.material = detail;
+                    renderer.material = baseMat;
                 }
-                else if (name.Contains("eye"))
+                if(rendName.Contains("detail"))
                 {
-                    renderer.material = eye;
+                    renderer.material = detailMat;
                 }
             }
         }
